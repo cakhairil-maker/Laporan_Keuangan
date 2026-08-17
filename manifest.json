@@ -1,0 +1,26 @@
+{
+  "name": "Laporan Keuangan",
+  "short_name": "Keuangan",
+  "description": "Pencatatan pemasukan dan pengeluaran pribadi, tersimpan di perangkat.",
+  "id": "./",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F6F3EC",
+  "theme_color": "#232220",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

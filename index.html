@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Laporan Keuangan</title>
+
+<!-- Metadata mobile/iOS -->
+<meta name="theme-color" content="#232220">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Laporan Keuangan">
+<link rel="manifest" href="./manifest.json">
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+<style>
+  :root{
+    --paper:#F6F3EC;
+    --ink:#232220;
+    --ink-soft:#6b6660;
+    --line:#DCD6C8;
+    --income:#3F6B4F;
+    --income-bg:#E7EEE5;
+    --expense:#A34B3F;
+    --expense-bg:#F3E5E0;
+    --accent:#8A7248;
+    --card:#FFFFFF;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Iowan Old Style','Georgia',serif;
+    background:var(--paper);
+    color:var(--ink);
+    padding:24px 16px 60px;
+  }
+  .wrap{max-width:880px;margin:0 auto;}
+  header{margin-bottom:22px;border-bottom:2px solid var(--ink);padding-bottom:14px;}
+  h1{
+    font-size:28px;
+    margin:0 0 4px;
+    letter-spacing:0.3px;
+    font-weight:700;
+  }
+  header p{
+    margin:0;
+    color:var(--ink-soft);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    font-size:13px;
+  }
+  .laporan-field{
+    margin-top:12px;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    max-width:420px;
+  }
+  .laporan-field label{
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    color:var(--ink-soft);
+  }
+  .laporan-field input{
+    font-family:'Iowan Old Style','Georgia',serif;
+    font-size:16px;
+    font-weight:700;
+    padding:8px 10px;
+    border:1px solid var(--line);
+    border-radius:7px;
+    background:#fff;
+    color:var(--ink);
+  }
+  .laporan-field input:focus{outline:2px solid var(--accent);outline-offset:1px;}
+
+  .kategori-summary{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+    margin-bottom:20px;
+  }
+  .kategori-summary .col{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:12px 14px;
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  }
+  .kategori-summary .col-title{
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    font-weight:700;
+    margin-bottom:8px;
+    padding-bottom:6px;
+    border-bottom:1px solid var(--line);
+  }
+  .kategori-summary .col-title.pemasukan{color:var(--income);}
+  .kategori-summary .col-title.pengeluaran{color:var(--expense);}
+  .kategori-summary .kat-row{
+    display:flex;
+    justify-content:space-between;
+    gap:8px;
+    font-size:13px;
+    padding:4px 0;
+  }
+  .kategori-summary .kat-row .kat-nama{color:var(--ink);}
+  .kategori-summary .kat-row .kat-nominal{font-weight:700;white-space:nowrap;}
+  .kategori-summary .kat-row.pemasukan .kat-nominal{color:var(--income);}
+  .kategori-summary .kat-row.pengeluaran .kat-nominal{color:var(--expense);}
+  .kategori-summary .kat-empty{
+    font-size:12px;
+    color:var(--ink-soft);
+    padding:4px 0;
+  }
+  @media (max-width:520px){
+    .kategori-summary{grid-template-columns:1fr;}
+  }
+  .summary{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    margin-bottom:22px;
+  }
+  .summary .box{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:14px 12px;
+  }
+  .summary .label{
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.6px;
+    color:var(--ink-soft);
+    margin-bottom:6px;
+  }
+  .summary .value{font-size:19px;font-weight:700;}
+  .summary .income .value{color:var(--income);}
+  .summary .expense .value{color:var(--expense);}
+  .summary .saldo .value{color:var(--ink);}
+
+  form{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:16px;
+    margin-bottom:20px;
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  }
+  .row{display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+  .field{flex:1;min-width:130px;display:flex;flex-direction:column;gap:4px;}
+  .field label{font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.5px;}
+  input,select{
+    font-family:inherit;
+    font-size:14px;
+    padding:9px 10px;
+    border:1px solid var(--line);
+    border-radius:7px;
+    background:#fff;
+    color:var(--ink);
+  }
+  input:focus,select:focus{outline:2px solid var(--accent);outline-offset:1px;}
+
+  .jenis-toggle{display:flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;}
+  .jenis-toggle button{
+    flex:1;
+    padding:9px 10px;
+    border:none;
+    background:#fff;
+    font-family:inherit;
+    font-size:13px;
+    cursor:pointer;
+    color:var(--ink-soft);
+  }
+  .jenis-toggle button.active.pemasukan{background:var(--income-bg);color:var(--income);font-weight:600;}
+  .jenis-toggle button.active.pengeluaran{background:var(--expense-bg);color:var(--expense);font-weight:600;}
+
+  .add-btn{
+    width:100%;
+    padding:11px;
+    background:var(--ink);
+    color:var(--paper);
+    border:none;
+    border-radius:7px;
+    font-family:inherit;
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+    letter-spacing:0.3px;
+  }
+  .add-btn:hover{background:#3a3833;}
+
+  .actions{
+    display:flex;
+    gap:8px;
+    margin-bottom:16px;
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    flex-wrap:wrap;
+  }
+  .actions button{
+    flex:1;
+    min-width:110px;
+    padding:9px 10px;
+    border-radius:7px;
+    border:1px solid var(--line);
+    background:var(--card);
+    font-family:inherit;
+    font-size:13px;
+    cursor:pointer;
+    color:var(--ink);
+  }
+  .actions button:hover{border-color:var(--accent);}
+  .actions button.danger{color:var(--expense);}
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:10px;
+    overflow:hidden;
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    font-size:13px;
+  }
+  thead{background:#EFEAE0;}
+  th{
+    text-align:left;
+    padding:9px 8px;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+    color:var(--ink-soft);
+    border-bottom:1px solid var(--line);
+  }
+  td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top;}
+  tr:last-child td{border-bottom:none;}
+  .pill{
+    display:inline-block;
+    padding:2px 8px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:600;
+  }
+  .pill.pemasukan{background:var(--income-bg);color:var(--income);}
+  .pill.pengeluaran{background:var(--expense-bg);color:var(--expense);}
+  .nominal{font-weight:700;white-space:nowrap;}
+  .nominal.pemasukan{color:var(--income);}
+  .nominal.pengeluaran{color:var(--expense);}
+  .del-row{
+    background:none;
+    border:none;
+    color:var(--ink-soft);
+    cursor:pointer;
+    font-size:13px;
+  }
+  .del-row:hover{color:var(--expense);}
+  .edit-row{
+    background:none;
+    border:none;
+    color:var(--ink-soft);
+    cursor:pointer;
+    font-size:13px;
+    margin-right:8px;
+  }
+  .edit-row:hover{color:var(--accent);}
+  .row-actions{white-space:nowrap;}
+
+  .edit-banner{
+    display:none;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    background:var(--income-bg);
+    border:1px solid var(--income);
+    color:var(--income);
+    border-radius:8px;
+    padding:8px 12px;
+    margin-bottom:12px;
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    font-size:13px;
+    font-weight:600;
+  }
+  .edit-banner.active{display:flex;}
+  .edit-banner button{
+    background:none;
+    border:1px solid var(--income);
+    color:var(--income);
+    border-radius:6px;
+    padding:4px 10px;
+    font-family:inherit;
+    font-size:12px;
+    cursor:pointer;
+  }
+
+  .audit-section{
+    margin-top:22px;
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  }
+  .audit-toggle{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:10px 14px;
+    width:100%;
+    text-align:left;
+    font-family:inherit;
+    font-size:13px;
+    font-weight:600;
+    color:var(--ink);
+    cursor:pointer;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .audit-toggle:hover{border-color:var(--accent);}
+  .audit-log{
+    display:none;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-top:none;
+    border-radius:0 0 8px 8px;
+    max-height:320px;
+    overflow-y:auto;
+  }
+  .audit-log.open{display:block;}
+  .audit-item{
+    padding:10px 14px;
+    border-bottom:1px solid var(--line);
+    font-size:12.5px;
+    line-height:1.5;
+  }
+  .audit-item:last-child{border-bottom:none;}
+  .audit-item .audit-head{
+    display:flex;
+    justify-content:space-between;
+    gap:8px;
+    margin-bottom:3px;
+  }
+  .audit-item .audit-aksi{font-weight:700;}
+  .audit-item .audit-aksi.tambah{color:var(--income);}
+  .audit-item .audit-aksi.edit{color:var(--accent);}
+  .audit-item .audit-aksi.hapus{color:var(--expense);}
+  .audit-item .audit-waktu{color:var(--ink-soft);white-space:nowrap;}
+  .audit-item .audit-detail{color:var(--ink-soft);}
+  .audit-item .audit-detail .lama{text-decoration:line-through;color:var(--expense);}
+  .audit-item .audit-detail .baru{color:var(--income);}
+  .audit-empty{
+    padding:14px;
+    text-align:center;
+    color:var(--ink-soft);
+    font-size:12.5px;
+  }
+  .empty{
+    text-align:center;
+    padding:30px 10px;
+    color:var(--ink-soft);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    font-size:13px;
+  }
+  .note{
+    margin-top:18px;
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    font-size:12px;
+    color:var(--ink-soft);
+    line-height:1.5;
+  }
+  .table-scroll{overflow-x:auto;}
+
+  @media print{
+    body{background:#fff;padding:0;}
+    form,.actions,.note,.edit-banner,.audit-section{display:none;}
+    .summary .box{border:1px solid #999;}
+    table{border:1px solid #999;}
+  }
+  @media (max-width:520px){
+    .summary{grid-template-columns:1fr;}
+    th:nth-child(4),td:nth-child(4){display:none;}
+  }
+  /* Optimasi iPhone / Safari */
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    padding-top:max(24px, env(safe-area-inset-top));
+    padding-right:max(16px, env(safe-area-inset-right));
+    padding-bottom:max(60px, env(safe-area-inset-bottom));
+    padding-left:max(16px, env(safe-area-inset-left));
+  }
+  button,input,select{font-size:16px;} /* mencegah auto-zoom Safari pada input */
+  button{-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+  input,select{-webkit-appearance:none;appearance:none;}
+  input[type="date"]{-webkit-appearance:auto;appearance:auto;}
+
+  .ios-hint{
+    display:none;
+    margin:0 0 16px;
+    padding:10px 12px;
+    border:1px solid var(--line);
+    border-radius:8px;
+    background:#fff;
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    font-size:12px;
+    line-height:1.5;
+    color:var(--ink-soft);
+  }
+  @media (display-mode: browser){
+    .ios-hint{display:block;}
+  }
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>LAPORAN KEUANGAN</h1>
+    <p>Pencatatan pemasukan &amp; pengeluaran — data tersimpan di browser perangkat ini.</p>
+    <div class="laporan-field">
+      <label for="namaLaporan">Nama Laporan</label>
+      <input type="text" id="namaLaporan" placeholder="Contoh: Laporan Kas Bulan Agustus 2026">
+    </div>
+    <div class="laporan-field">
+      <label for="dibuatOleh">Dibuat Oleh</label>
+      <input type="text" id="dibuatOleh" placeholder="Nama penyusun laporan">
+    </div>
+  </header>
+
+  <div class="ios-hint" id="iosHint">
+    Tip iPhone: buka halaman ini dari Safari. Jika sudah di-host melalui HTTPS, gunakan tombol Bagikan → Tambahkan ke Layar Utama agar tampil seperti aplikasi.
+  </div>
+
+  <div class="summary">
+    <div class="box income">
+      <div class="label">Total Pemasukan</div>
+      <div class="value" id="totalIn">Rp0</div>
+    </div>
+    <div class="box expense">
+      <div class="label">Total Pengeluaran</div>
+      <div class="value" id="totalOut">Rp0</div>
+    </div>
+    <div class="box saldo">
+      <div class="label">Saldo</div>
+      <div class="value" id="saldo">Rp0</div>
+    </div>
+  </div>
+
+  <div class="kategori-summary">
+    <div class="col">
+      <div class="col-title pemasukan">Jumlah per Kategori — Pemasukan</div>
+      <div id="katPemasukan"></div>
+    </div>
+    <div class="col">
+      <div class="col-title pengeluaran">Jumlah per Kategori — Pengeluaran</div>
+      <div id="katPengeluaran"></div>
+    </div>
+  </div>
+
+  <div class="edit-banner" id="editBanner">
+    <span id="editBannerText">Mengedit transaksi</span>
+    <button type="button" id="cancelEdit">Batal Edit</button>
+  </div>
+
+  <form id="entryForm">
+    <div class="row">
+      <div class="field">
+        <label for="tanggal">Tanggal</label>
+        <input type="date" id="tanggal" required>
+      </div>
+      <div class="field">
+        <label>Jenis</label>
+        <div class="jenis-toggle">
+          <button type="button" id="btnIn" class="active pemasukan">Pemasukan</button>
+          <button type="button" id="btnOut" class="pengeluaran">Pengeluaran</button>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label for="kategori">Kategori</label>
+        <input type="text" id="kategori" placeholder="Gaji, Makan, Transport..." required>
+      </div>
+      <div class="field">
+        <label for="nominal">Nominal (Rp)</label>
+        <input type="number" id="nominal" placeholder="0" min="0" required>
+      </div>
+    </div>
+    <div class="row">
+      <div class="field">
+        <label for="catatan">Catatan (opsional)</label>
+        <input type="text" id="catatan" placeholder="Keterangan tambahan">
+      </div>
+    </div>
+    <button type="submit" class="add-btn" id="submitBtn">Tambah</button>
+  </form>
+
+  <div class="actions">
+    <button id="exportPdf">Export PDF</button>
+    <button id="exportCsv">Export CSV</button>
+    <button id="clearAll" class="danger">Hapus Semua</button>
+  </div>
+
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th>Tanggal</th>
+          <th>Jenis</th>
+          <th>Kategori</th>
+          <th>Catatan</th>
+          <th>Nominal</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div class="empty" id="emptyMsg" style="display:none;">Belum ada catatan. Tambahkan transaksi pertama Anda di atas.</div>
+  </div>
+
+  <div class="audit-section">
+    <button type="button" class="audit-toggle" id="auditToggle">
+      <span>🔍 Riwayat Audit (perubahan &amp; koreksi data)</span>
+      <span id="auditCount">0</span>
+    </button>
+    <div class="audit-log" id="auditLog"></div>
+  </div>
+
+  <p class="note">Untuk PDF: tekan "Export PDF", lalu pilih "Save as PDF / Simpan sebagai PDF" di dialog cetak.</p>
+</div>
+
+<script>
+const STORAGE_KEY = 'catatan-keuangan-entries';
+const STORAGE_KEY_LAPORAN = 'catatan-keuangan-nama-laporan';
+const STORAGE_KEY_PEMBUAT = 'catatan-keuangan-dibuat-oleh';
+const STORAGE_KEY_AUDIT = 'catatan-keuangan-audit-log';
+let entries = [];
+let auditLog = [];
+let jenisAktif = 'pemasukan';
+let editingId = null;
+
+
+function isFileProtocol(){
+  return location.protocol === 'file:';
+}
+
+function showStorageWarningIfNeeded(){
+  if(!isFileProtocol()) return;
+  const hint = document.getElementById('iosHint');
+  if(hint){
+    hint.style.display = 'block';
+    hint.textContent = 'Anda sedang membuka file HTML lokal. Safari iPhone dapat membatasi penyimpanan/fitur tertentu pada file lokal. Untuk penggunaan stabil dan data lebih konsisten, host halaman ini melalui HTTPS lalu buka dari Safari.';
+  }
+}
+
+const tbody = document.getElementById('tbody');
+const emptyMsg = document.getElementById('emptyMsg');
+const totalInEl = document.getElementById('totalIn');
+const totalOutEl = document.getElementById('totalOut');
+const saldoEl = document.getElementById('saldo');
+const btnIn = document.getElementById('btnIn');
+const btnOut = document.getElementById('btnOut');
+const namaLaporanInput = document.getElementById('namaLaporan');
+const dibuatOlehInput = document.getElementById('dibuatOleh');
+const katPemasukanEl = document.getElementById('katPemasukan');
+const katPengeluaranEl = document.getElementById('katPengeluaran');
+const editBanner = document.getElementById('editBanner');
+const submitBtn = document.getElementById('submitBtn');
+const auditToggle = document.getElementById('auditToggle');
+const auditLogEl = document.getElementById('auditLog');
+const auditCountEl = document.getElementById('auditCount');
+
+function formatRupiah(n){
+  const rounded = Math.round(n);
+  const sign = rounded < 0 ? '-' : '';
+  return sign + 'Rp' + Math.abs(rounded).toLocaleString('id-ID');
+}
+
+function formatTanggal(d){
+  if(!d) return '';
+  const dt = new Date(d + 'T00:00:00');
+  if(isNaN(dt)) return d;
+  return dt.toLocaleDateString('id-ID', {day:'2-digit',month:'short',year:'numeric'});
+}
+
+function formatWaktuAudit(iso){
+  const dt = new Date(iso);
+  if(isNaN(dt)) return iso;
+  return dt.toLocaleString('id-ID', {day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+}
+
+function ringkasEntry(e){
+  const jenisLabel = e.jenis === 'pemasukan' ? 'Pemasukan' : 'Pengeluaran';
+  return `${jenisLabel} · ${e.kategori} · ${formatRupiah(e.nominal)} · ${formatTanggal(e.tanggal)}${e.catatan ? ' · ' + e.catatan : ''}`;
+}
+
+function loadEntries(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    entries = raw ? JSON.parse(raw) : [];
+  }catch(e){
+    entries = [];
+  }
+  render();
+}
+
+function loadAuditLog(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY_AUDIT);
+    auditLog = raw ? JSON.parse(raw) : [];
+  }catch(e){
+    auditLog = [];
+  }
+  renderAuditLog();
+}
+
+function saveAuditLog(){
+  try{
+    localStorage.setItem(STORAGE_KEY_AUDIT, JSON.stringify(auditLog));
+  }catch(e){
+    console.error('Gagal menyimpan riwayat audit', e);
+  }
+}
+
+function catatAudit(aksi, detail){
+  auditLog.unshift({
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2,7),
+    waktu: new Date().toISOString(),
+    aksi, // 'tambah' | 'edit' | 'hapus'
+    detail // { lama, baru } masing-masing string ringkasan atau null
+  });
+  saveAuditLog();
+  renderAuditLog();
+}
+
+function renderAuditLog(){
+  auditCountEl.textContent = auditLog.length;
+
+  if(auditLog.length === 0){
+    auditLogEl.innerHTML = '<div class="audit-empty">Belum ada riwayat perubahan.</div>';
+    return;
+  }
+
+  const aksiLabel = { tambah: 'DITAMBAHKAN', edit: 'DIKOREKSI', hapus: 'DIHAPUS' };
+
+  auditLogEl.innerHTML = auditLog.map(item => {
+    let detailHtml = '';
+    if(item.aksi === 'edit'){
+      detailHtml = `<div class="audit-detail"><span class="lama">${escapeHtml(item.detail.lama)}</span><br>→ <span class="baru">${escapeHtml(item.detail.baru)}</span></div>`;
+    } else {
+      detailHtml = `<div class="audit-detail">${escapeHtml(item.detail.baru || item.detail.lama || '')}</div>`;
+    }
+    return `
+      <div class="audit-item">
+        <div class="audit-head">
+          <span class="audit-aksi ${item.aksi}">${aksiLabel[item.aksi] || item.aksi}</span>
+          <span class="audit-waktu">${formatWaktuAudit(item.waktu)}</span>
+        </div>
+        ${detailHtml}
+      </div>
+    `;
+  }).join('');
+}
+
+function loadNamaLaporan(){
+  try{
+    const nama = localStorage.getItem(STORAGE_KEY_LAPORAN);
+    if(nama) namaLaporanInput.value = nama;
+  }catch(e){
+    // abaikan
+  }
+}
+
+function saveNamaLaporan(){
+  try{
+    localStorage.setItem(STORAGE_KEY_LAPORAN, namaLaporanInput.value.trim());
+  }catch(e){
+    console.error('Gagal menyimpan nama laporan', e);
+  }
+}
+
+function loadDibuatOleh(){
+  try{
+    const nama = localStorage.getItem(STORAGE_KEY_PEMBUAT);
+    if(nama) dibuatOlehInput.value = nama;
+  }catch(e){
+    // abaikan
+  }
+}
+
+function saveDibuatOleh(){
+  try{
+    localStorage.setItem(STORAGE_KEY_PEMBUAT, dibuatOlehInput.value.trim());
+  }catch(e){
+    console.error('Gagal menyimpan nama pembuat laporan', e);
+  }
+}
+
+function saveEntries(){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+  }catch(e){
+    console.error('Gagal menyimpan data', e);
+    alert('Gagal menyimpan data ke penyimpanan lokal browser.');
+  }
+}
+
+function render(){
+  tbody.innerHTML = '';
+  if(entries.length === 0){
+    emptyMsg.style.display = 'block';
+  } else {
+    emptyMsg.style.display = 'none';
+  }
+
+  const sorted = [...entries].sort((a,b) => (a.tanggal < b.tanggal ? 1 : -1));
+
+  let totalIn = 0, totalOut = 0;
+  entries.forEach(e => {
+    if(e.jenis === 'pemasukan') totalIn += Number(e.nominal);
+    else totalOut += Number(e.nominal);
+  });
+
+  sorted.forEach(e => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${formatTanggal(e.tanggal)}</td>
+      <td><span class="pill ${e.jenis}">${e.jenis === 'pemasukan' ? 'Masuk' : 'Keluar'}</span></td>
+      <td>${escapeHtml(e.kategori)}</td>
+      <td>${escapeHtml(e.catatan || '-')}</td>
+      <td class="nominal ${e.jenis}">${e.jenis === 'pemasukan' ? '+' : '-'}${formatRupiah(e.nominal)}</td>
+      <td class="row-actions">
+        <button class="edit-row" data-id="${e.id}" title="Edit">✎</button>
+        <button class="del-row" data-id="${e.id}" title="Hapus">✕</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  const saldo = totalIn - totalOut;
+  totalInEl.textContent = formatRupiah(totalIn);
+  totalOutEl.textContent = formatRupiah(totalOut);
+  saldoEl.textContent = formatRupiah(saldo);
+  saldoEl.style.color = saldo < 0 ? 'var(--expense)' : saldo > 0 ? 'var(--income)' : 'var(--ink)';
+
+  renderKategoriSummary();
+
+  document.querySelectorAll('.del-row').forEach(btn => {
+    btn.addEventListener('click', () => deleteEntry(btn.dataset.id));
+  });
+  document.querySelectorAll('.edit-row').forEach(btn => {
+    btn.addEventListener('click', () => startEdit(btn.dataset.id));
+  });
+}
+
+function renderKategoriSummary(){
+  const totals = { pemasukan: {}, pengeluaran: {} };
+
+  entries.forEach(e => {
+    const grup = totals[e.jenis];
+    const key = e.kategori || '(Tanpa kategori)';
+    grup[key] = (grup[key] || 0) + Number(e.nominal);
+  });
+
+  renderKategoriKolom(katPemasukanEl, totals.pemasukan, 'pemasukan');
+  renderKategoriKolom(katPengeluaranEl, totals.pengeluaran, 'pengeluaran');
+}
+
+function renderKategoriKolom(container, totalsObj, jenis){
+  const kategoriList = Object.keys(totalsObj).sort((a,b) => totalsObj[b] - totalsObj[a]);
+
+  if(kategoriList.length === 0){
+    container.innerHTML = '<div class="kat-empty">Belum ada data.</div>';
+    return;
+  }
+
+  container.innerHTML = kategoriList.map(kat => `
+    <div class="kat-row ${jenis}">
+      <span class="kat-nama">${escapeHtml(kat)}</span>
+      <span class="kat-nominal">${formatRupiah(totalsObj[kat])}</span>
+    </div>
+  `).join('');
+}
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function deleteEntry(id){
+  const target = entries.find(e => e.id === id);
+  if(!target) return;
+  if(!confirm('Hapus transaksi ini? Tindakan ini akan tercatat di riwayat audit.')) return;
+  entries = entries.filter(e => e.id !== id);
+  saveEntries();
+  catatAudit('hapus', { lama: ringkasEntry(target), baru: null });
+  if(editingId === id) cancelEdit();
+  render();
+}
+
+function startEdit(id){
+  const target = entries.find(e => e.id === id);
+  if(!target) return;
+  editingId = id;
+
+  document.getElementById('tanggal').value = target.tanggal;
+  document.getElementById('kategori').value = target.kategori;
+  document.getElementById('nominal').value = target.nominal;
+  document.getElementById('catatan').value = target.catatan || '';
+  jenisAktif = target.jenis;
+  if(jenisAktif === 'pemasukan'){
+    btnIn.classList.add('active');
+    btnOut.classList.remove('active');
+  } else {
+    btnOut.classList.add('active');
+    btnIn.classList.remove('active');
+  }
+
+  editBanner.classList.add('active');
+  submitBtn.textContent = 'Update Transaksi';
+  document.getElementById('entryForm').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function cancelEdit(){
+  editingId = null;
+  editBanner.classList.remove('active');
+  submitBtn.textContent = 'Tambah';
+  document.getElementById('entryForm').reset();
+  document.getElementById('tanggal').valueAsDate = new Date();
+  jenisAktif = 'pemasukan';
+  btnIn.classList.add('active');
+  btnOut.classList.remove('active');
+}
+
+btnIn.addEventListener('click', () => {
+  jenisAktif = 'pemasukan';
+  btnIn.classList.add('active');
+  btnOut.classList.remove('active');
+});
+btnOut.addEventListener('click', () => {
+  jenisAktif = 'pengeluaran';
+  btnOut.classList.add('active');
+  btnIn.classList.remove('active');
+});
+
+document.getElementById('entryForm').addEventListener('submit', (ev) => {
+  ev.preventDefault();
+  const tanggal = document.getElementById('tanggal').value;
+  const kategori = document.getElementById('kategori').value.trim();
+  const nominal = parseFloat(document.getElementById('nominal').value);
+  const catatan = document.getElementById('catatan').value.trim();
+
+  if(!tanggal || !kategori || isNaN(nominal) || nominal <= 0){
+    alert('Mohon lengkapi tanggal, kategori, dan nominal dengan benar.');
+    return;
+  }
+
+  if(editingId){
+    const idx = entries.findIndex(e => e.id === editingId);
+    if(idx === -1){
+      cancelEdit();
+      return;
+    }
+    const lama = ringkasEntry(entries[idx]);
+    const updated = { ...entries[idx], tanggal, jenis: jenisAktif, kategori, nominal, catatan };
+    entries[idx] = updated;
+    saveEntries();
+    catatAudit('edit', { lama, baru: ringkasEntry(updated) });
+    cancelEdit();
+  } else {
+    const baru = {
+      id: Date.now().toString(36) + Math.random().toString(36).slice(2,7),
+      tanggal, jenis: jenisAktif, kategori, nominal, catatan
+    };
+    entries.push(baru);
+    saveEntries();
+    catatAudit('tambah', { lama: null, baru: ringkasEntry(baru) });
+    ev.target.reset();
+    document.getElementById('tanggal').value = tanggal;
+  }
+
+  render();
+});
+
+document.getElementById('clearAll').addEventListener('click', () => {
+  if(entries.length === 0) return;
+  if(confirm('Hapus semua catatan? Tindakan ini tidak bisa dibatalkan.')){
+    entries = [];
+    saveEntries();
+    render();
+  }
+});
+
+document.getElementById('exportPdf').addEventListener('click', () => {
+  window.print();
+});
+
+document.getElementById('exportCsv').addEventListener('click', () => {
+  if(entries.length === 0){
+    alert('Belum ada data untuk diekspor.');
+    return;
+  }
+  const namaLaporan = namaLaporanInput.value.trim();
+  const dibuatOleh = dibuatOlehInput.value.trim();
+  const header = ['Tanggal','Jenis','Kategori','Catatan','Nominal'];
+  const rows = [...entries].sort((a,b)=> (a.tanggal < b.tanggal ? 1 : -1)).map(e => [
+    e.tanggal,
+    e.jenis === 'pemasukan' ? 'Pemasukan' : 'Pengeluaran',
+    e.kategori,
+    e.catatan || '',
+    e.nominal
+  ]);
+  const csvLines = [];
+  if(namaLaporan){
+    csvLines.push([`Nama Laporan: ${namaLaporan}`]);
+  }
+  if(dibuatOleh){
+    csvLines.push([`Dibuat Oleh: ${dibuatOleh}`]);
+  }
+  if(namaLaporan || dibuatOleh){
+    csvLines.push([]);
+  }
+  csvLines.push(header, ...rows);
+  const csvContent = csvLines
+    .map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(','))
+    .join('\n');
+  const blob = new Blob(['\uFEFF' + csvContent], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'catatan-keuangan.csv';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => {
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, 1000);
+});
+
+document.getElementById('cancelEdit').addEventListener('click', cancelEdit);
+
+auditToggle.addEventListener('click', () => {
+  auditLogEl.classList.toggle('open');
+});
+
+namaLaporanInput.addEventListener('input', saveNamaLaporan);
+dibuatOlehInput.addEventListener('input', saveDibuatOleh);
+
+// set default date to today
+document.getElementById('tanggal').valueAsDate = new Date();
+
+loadNamaLaporan();
+loadDibuatOleh();
+loadEntries();
+loadAuditLog();
+showStorageWarningIfNeeded();
+
+// Daftarkan service worker hanya jika halaman dijalankan dari HTTP/HTTPS.
+// Service worker tidak dapat digunakan secara normal dari file:// lokal.
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(err => {
+      console.warn('Service worker gagal didaftarkan:', err);
+    });
+  });
+}
+</script>
+</body>
+</html>
