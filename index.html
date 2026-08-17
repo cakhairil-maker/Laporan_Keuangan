@@ -214,6 +214,31 @@
   }
   .actions button:hover{border-color:var(--accent);}
   .actions button.danger{color:var(--expense);}
+  .actions button.backup{color:var(--income);}
+  .actions button.restore{color:var(--accent);}
+
+  .detail-section{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+    margin:0 0 20px;
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  }
+  .detail-card{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;}
+  .detail-head{padding:11px 14px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;align-items:center;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.45px;}
+  .detail-head.pemasukan{color:var(--income);}
+  .detail-head.pengeluaran{color:var(--expense);}
+  .detail-total{white-space:nowrap;font-size:13px;}
+  .detail-list{padding:4px 14px;}
+  .detail-item{display:grid;grid-template-columns:1fr auto;gap:8px 12px;padding:10px 0;border-bottom:1px solid var(--line);}
+  .detail-item:last-child{border-bottom:none;}
+  .detail-main{min-width:0;}
+  .detail-category{font-size:14px;font-weight:700;color:var(--ink);overflow-wrap:anywhere;}
+  .detail-meta{font-size:11.5px;color:var(--ink-soft);margin-top:3px;line-height:1.4;overflow-wrap:anywhere;}
+  .detail-amount{font-weight:700;white-space:nowrap;font-size:14px;}
+  .detail-amount.pemasukan{color:var(--income);}
+  .detail-amount.pengeluaran{color:var(--expense);}
+  .detail-empty{padding:14px;color:var(--ink-soft);font-size:12.5px;}
 
   table{
     width:100%;
@@ -377,7 +402,10 @@
   }
   @media (max-width:520px){
     .summary{grid-template-columns:1fr;}
+    .detail-section{grid-template-columns:1fr;}
     th:nth-child(4),td:nth-child(4){display:none;}
+    .jenis-toggle button{min-width:0;padding:10px 5px;font-size:14px;white-space:nowrap;}
+    .actions button{min-width:calc(50% - 8px);}
   }
   /* Optimasi iPhone / Safari */
   html{-webkit-text-size-adjust:100%;}
@@ -455,6 +483,17 @@
     </div>
   </div>
 
+  <div class="detail-section">
+    <div class="detail-card">
+      <div class="detail-head pemasukan"><span>Rincian Pemasukan</span><span class="detail-total" id="detailTotalIn">Rp0</span></div>
+      <div class="detail-list" id="detailPemasukan"></div>
+    </div>
+    <div class="detail-card">
+      <div class="detail-head pengeluaran"><span>Rincian Pengeluaran</span><span class="detail-total" id="detailTotalOut">Rp0</span></div>
+      <div class="detail-list" id="detailPengeluaran"></div>
+    </div>
+  </div>
+
   <div class="edit-banner" id="editBanner">
     <span id="editBannerText">Mengedit transaksi</span>
     <button type="button" id="cancelEdit">Batal Edit</button>
@@ -496,8 +535,11 @@
   <div class="actions">
     <button id="exportPdf">Export PDF</button>
     <button id="exportCsv">Export CSV</button>
+    <button id="backupData" class="backup">Backup Data</button>
+    <button id="restoreData" class="restore">Restore Data</button>
     <button id="clearAll" class="danger">Hapus Semua</button>
   </div>
+  <input type="file" id="restoreFile" accept="application/json,.json" hidden>
 
   <div class="table-scroll">
     <table>
@@ -524,7 +566,7 @@
     <div class="audit-log" id="auditLog"></div>
   </div>
 
-  <p class="note">Untuk PDF: tekan "Export PDF", lalu pilih "Save as PDF / Simpan sebagai PDF" di dialog cetak.</p>
+  <p class="note">Gunakan <b>Backup Data</b> secara berkala. File JSON hasil backup dapat dipulihkan dengan <b>Restore Data</b>. Untuk PDF: tekan “Export PDF”, lalu pilih “Save as PDF / Simpan sebagai PDF”.</p>
 </div>
 
 <script>
@@ -562,6 +604,10 @@ const namaLaporanInput = document.getElementById('namaLaporan');
 const dibuatOlehInput = document.getElementById('dibuatOleh');
 const katPemasukanEl = document.getElementById('katPemasukan');
 const katPengeluaranEl = document.getElementById('katPengeluaran');
+const detailPemasukanEl = document.getElementById('detailPemasukan');
+const detailPengeluaranEl = document.getElementById('detailPengeluaran');
+const detailTotalInEl = document.getElementById('detailTotalIn');
+const detailTotalOutEl = document.getElementById('detailTotalOut');
 const editBanner = document.getElementById('editBanner');
 const submitBtn = document.getElementById('submitBtn');
 const auditToggle = document.getElementById('auditToggle');
@@ -742,6 +788,7 @@ function render(){
   saldoEl.style.color = saldo < 0 ? 'var(--expense)' : saldo > 0 ? 'var(--income)' : 'var(--ink)';
 
   renderKategoriSummary();
+  renderRincian(totalIn, totalOut);
 
   document.querySelectorAll('.del-row').forEach(btn => {
     btn.addEventListener('click', () => deleteEntry(btn.dataset.id));
@@ -778,6 +825,26 @@ function renderKategoriKolom(container, totalsObj, jenis){
       <span class="kat-nominal">${formatRupiah(totalsObj[kat])}</span>
     </div>
   `).join('');
+}
+
+function renderRincian(totalIn, totalOut){
+  detailTotalInEl.textContent = formatRupiah(totalIn);
+  detailTotalOutEl.textContent = formatRupiah(totalOut);
+  const pemasukan = [...entries].filter(e => e.jenis === 'pemasukan').sort((a,b) => (a.tanggal < b.tanggal ? 1 : -1));
+  const pengeluaran = [...entries].filter(e => e.jenis === 'pengeluaran').sort((a,b) => (a.tanggal < b.tanggal ? 1 : -1));
+  renderRincianList(detailPemasukanEl, pemasukan, 'pemasukan');
+  renderRincianList(detailPengeluaranEl, pengeluaran, 'pengeluaran');
+}
+
+function renderRincianList(container, list, jenis){
+  if(list.length === 0){
+    container.innerHTML = '<div class="detail-empty">Belum ada data.</div>';
+    return;
+  }
+  container.innerHTML = list.map(e => {
+    const catatan = e.catatan ? ` · ${escapeHtml(e.catatan)}` : '';
+    return `<div class="detail-item"><div class="detail-main"><div class="detail-category">${escapeHtml(e.kategori)}</div><div class="detail-meta">${formatTanggal(e.tanggal)}${catatan}</div></div><div class="detail-amount ${jenis}">${formatRupiah(e.nominal)}</div></div>`;
+  }).join('');
 }
 
 function escapeHtml(str){
@@ -879,6 +946,45 @@ document.getElementById('entryForm').addEventListener('submit', (ev) => {
   }
 
   render();
+});
+
+document.getElementById('backupData').addEventListener('click', () => {
+  const backup = {
+    aplikasi: 'Laporan Keuangan', versi: 2, dibuatPada: new Date().toISOString(),
+    namaLaporan: namaLaporanInput.value.trim(), dibuatOleh: dibuatOlehInput.value.trim(), entries, auditLog
+  };
+  const blob = new Blob([JSON.stringify(backup, null, 2)], {type:'application/json;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `backup-laporan-keuangan-${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a); a.click();
+  setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 1000);
+});
+
+const restoreFileInput = document.getElementById('restoreFile');
+document.getElementById('restoreData').addEventListener('click', () => { restoreFileInput.value=''; restoreFileInput.click(); });
+restoreFileInput.addEventListener('change', async () => {
+  const file = restoreFileInput.files && restoreFileInput.files[0];
+  if(!file) return;
+  try{
+    const data = JSON.parse(await file.text());
+    if(!data || !Array.isArray(data.entries)) throw new Error('Format tidak valid');
+    if(!confirm(`Restore ${data.entries.length} transaksi dari file backup? Data saat ini akan diganti.`)) return;
+    entries = data.entries.map(e => ({
+      id:String(e.id || (Date.now().toString(36)+Math.random().toString(36).slice(2,7))),
+      tanggal:String(e.tanggal||''), jenis:e.jenis==='pengeluaran'?'pengeluaran':'pemasukan',
+      kategori:String(e.kategori||''), nominal:Number(e.nominal)||0, catatan:String(e.catatan||'')
+    })).filter(e => e.tanggal && e.kategori && e.nominal > 0);
+    auditLog = Array.isArray(data.auditLog) ? data.auditLog : [];
+    namaLaporanInput.value = String(data.namaLaporan || '');
+    dibuatOlehInput.value = String(data.dibuatOleh || '');
+    saveEntries(); saveAuditLog(); saveNamaLaporan(); saveDibuatOleh(); render(); renderAuditLog();
+    alert(`Restore berhasil. ${entries.length} transaksi dimuat.`);
+  }catch(err){
+    console.error(err);
+    alert('File backup tidak dapat dibaca. Pilih file JSON hasil Backup Data dari aplikasi ini.');
+  }
 });
 
 document.getElementById('clearAll').addEventListener('click', () => {
