@@ -512,6 +512,9 @@
   <div class="actions">
     <button id="exportPdf">Export PDF</button>
     <button id="exportCsv">Export CSV</button>
+    <button id="backupData">Backup Data</button>
+    <button id="restoreData">Restore Data</button>
+    <input type="file" id="restoreFileInput" accept="application/json" style="display:none;">
     <button id="clearAll" class="danger">Hapus Semua</button>
   </div>
 
@@ -901,6 +904,76 @@ document.getElementById('entryForm').addEventListener('submit', (ev) => {
   }
 
   render();
+});
+
+document.getElementById('backupData').addEventListener('click', () => {
+  const backup = {
+    tipe: 'catatan-keuangan-backup',
+    versi: 1,
+    tanggalBackup: new Date().toISOString(),
+    namaLaporan: namaLaporanInput.value.trim(),
+    dibuatOleh: dibuatOlehInput.value.trim(),
+    entries: entries,
+    auditLog: auditLog
+  };
+  const blob = new Blob([JSON.stringify(backup, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  const tanggalFile = new Date().toISOString().slice(0,10);
+  a.download = `backup-catatan-keuangan-${tanggalFile}.json`;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => {
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, 0);
+});
+
+document.getElementById('restoreData').addEventListener('click', () => {
+  document.getElementById('restoreFileInput').click();
+});
+
+document.getElementById('restoreFileInput').addEventListener('change', (ev) => {
+  const file = ev.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    let data;
+    try{
+      data = JSON.parse(e.target.result);
+    } catch(err){
+      alert('File backup tidak valid atau rusak.');
+      ev.target.value = '';
+      return;
+    }
+    if(!data || !Array.isArray(data.entries)){
+      alert('File backup tidak valid: format data tidak dikenali.');
+      ev.target.value = '';
+      return;
+    }
+    if(!confirm('Pulihkan data dari file backup ini? Data yang ada saat ini akan digantikan.')){
+      ev.target.value = '';
+      return;
+    }
+    entries = data.entries;
+    auditLog = Array.isArray(data.auditLog) ? data.auditLog : [];
+    saveEntries();
+    saveAuditLog();
+    if(typeof data.namaLaporan === 'string'){
+      namaLaporanInput.value = data.namaLaporan;
+      localStorage.setItem(STORAGE_KEY_LAPORAN, data.namaLaporan);
+    }
+    if(typeof data.dibuatOleh === 'string'){
+      dibuatOlehInput.value = data.dibuatOleh;
+      localStorage.setItem(STORAGE_KEY_PEMBUAT, data.dibuatOleh);
+    }
+    render();
+    renderAuditLog();
+    alert('Data berhasil dipulihkan dari backup.');
+    ev.target.value = '';
+  };
+  reader.readAsText(file);
 });
 
 document.getElementById('clearAll').addEventListener('click', () => {
