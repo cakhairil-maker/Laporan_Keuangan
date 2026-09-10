@@ -1,37 +1,33 @@
-const CACHE_NAME = 'laporan-keuangan-v1';
-const APP_SHELL = [
-  './',
-  './index.html',
-  './manifest.json',
-  './icons/apple-touch-icon.png',
-  './icons/icon-192.png',
-  './icons/icon-512.png'
-];
+// Service worker sederhana: menyimpan salinan aplikasi di HP
+// supaya tetap bisa dibuka walau tidak ada koneksi internet.
+const NAMA_CACHE = "catatan-keuangan-v1";
+const BERKAS_INTI = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png"];
 
-self.addEventListener('install', event => {
-  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL)));
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    caches.open(NAMA_CACHE).then((cache) => cache.addAll(BERKAS_INTI))
+  );
   self.skipWaiting();
 });
 
-self.addEventListener('activate', event => {
+self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then(keys => Promise.all(
-      keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))
-    ))
+    caches.keys().then((keys) =>
+      Promise.all(keys.filter((k) => k !== NAMA_CACHE).map((k) => caches.delete(k)))
+    )
   );
   self.clients.claim();
 });
 
-self.addEventListener('fetch', event => {
-  if (event.request.method !== 'GET') return;
-
+// Strategi: coba ambil dari internet dulu; kalau gagal (offline), pakai salinan tersimpan.
+self.addEventListener("fetch", (event) => {
   event.respondWith(
     fetch(event.request)
-      .then(response => {
-        const copy = response.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
-        return response;
+      .then((res) => {
+        const salinan = res.clone();
+        caches.open(NAMA_CACHE).then((cache) => cache.put(event.request, salinan));
+        return res;
       })
-      .catch(() => caches.match(event.request).then(cached => cached || caches.match('./index.html')))
+      .catch(() => caches.match(event.request).then((res) => res || caches.match("./index.html")))
   );
 });

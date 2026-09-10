@@ -1,1072 +1,503 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Laporan Keuangan</title>
-
-<!-- Metadata mobile/iOS -->
-<meta name="theme-color" content="#232220">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Laporan Keuangan">
-<link rel="manifest" href="./manifest.json">
-<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Catatan Keuangan</title>
+<meta name="theme-color" content="#1B2A41" />
+<link rel="manifest" href="manifest.json" />
+<link rel="apple-touch-icon" href="icon-192.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Catatan Keuangan" />
 <style>
-  :root{
-    --paper:#F6F3EC;
-    --ink:#232220;
-    --ink-soft:#6b6660;
-    --line:#DCD6C8;
-    --income:#3F6B4F;
-    --income-bg:#E7EEE5;
-    --expense:#A34B3F;
-    --expense-bg:#F3E5E0;
-    --accent:#8A7248;
-    --card:#FFFFFF;
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: #F5F6F4;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, system-ui, sans-serif;
+    color: #1B2A41;
+    padding-bottom: 40px;
   }
-  *{box-sizing:border-box;}
-  body{
-    margin:0;
-    font-family:'Iowan Old Style','Georgia',serif;
-    background:var(--paper);
-    color:var(--ink);
-    padding:24px 16px 60px;
+  .wrap { max-width: 480px; margin: 0 auto; padding: 24px 16px 40px; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  .pil {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #E9EDE9; color: #3E5F48; font-size: 12px; font-weight: 600;
+    padding: 4px 10px; border-radius: 999px; margin-bottom: 16px;
   }
-  .wrap{max-width:880px;margin:0 auto;}
-  header{margin-bottom:22px;border-bottom:2px solid var(--ink);padding-bottom:14px;}
-  h1{
-    font-size:28px;
-    margin:0 0 4px;
-    letter-spacing:0.3px;
-    font-weight:700;
+  .kartu {
+    background: white; border-radius: 16px; padding: 16px;
+    margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
   }
-  header p{
-    margin:0;
-    color:var(--ink-soft);
-    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-    font-size:13px;
+  .kartu-saldo {
+    background: #1B2A41; color: white; border-radius: 16px; padding: 20px; margin-bottom: 16px;
   }
-  .laporan-field{
-    margin-top:12px;
-    display:flex;
-    flex-direction:column;
-    gap:4px;
-    max-width:420px;
+  .label-kecil { font-size: 12px; color: #6B7280; display: block; margin-bottom: 4px; }
+  input[type=text] {
+    width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid #E5E7EB;
+    font-size: 15px; margin-bottom: 12px; font-family: inherit;
   }
-  .laporan-field label{
-    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-    font-size:11px;
-    text-transform:uppercase;
-    letter-spacing:0.5px;
-    color:var(--ink-soft);
+  .baris-2 { display: flex; gap: 8px; margin-bottom: 12px; }
+  .toggle-btn {
+    flex: 1; padding: 10px 0; border-radius: 10px; border: none; font-weight: 600;
+    font-size: 14px; cursor: pointer; background: #F0F1EF; color: #4B5563;
   }
-  .laporan-field input{
-    font-family:'Iowan Old Style','Georgia',serif;
-    font-size:16px;
-    font-weight:700;
-    padding:8px 10px;
-    border:1px solid var(--line);
-    border-radius:7px;
-    background:#fff;
-    color:var(--ink);
+  .toggle-btn.aktif-masuk { background: #4F7A5D; color: white; }
+  .toggle-btn.aktif-keluar { background: #B85C38; color: white; }
+  button { font-family: inherit; }
+  .btn-utama {
+    width: 100%; padding: 12px 0; border-radius: 10px; border: none;
+    background: #1B2A41; color: white; font-weight: 600; font-size: 15px; cursor: pointer;
   }
-  .laporan-field input:focus{outline:2px solid var(--accent);outline-offset:1px;}
-
-  .kategori-summary{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:14px;
-    margin-bottom:20px;
+  .btn-luar {
+    width: 100%; padding: 12px 0; border-radius: 10px; border: 1px solid #1B2A41;
+    background: white; color: #1B2A41; font-weight: 600; font-size: 15px; cursor: pointer; margin-top: 16px;
   }
-  .kategori-summary .col{
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:10px;
-    padding:12px 14px;
-    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  .ringkasan-baris { display: flex; gap: 12px; margin-top: 16px; }
+  .kotak-ringkasan { flex: 1; background: rgba(255,255,255,0.08); border-radius: 10px; padding: 10px 12px; }
+  .kotak-label { font-size: 12px; opacity: 0.8; }
+  .kotak-nilai { font-size: 15px; font-weight: 600; margin-top: 4px; }
+  .baris-transaksi {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 0; border-bottom: 1px solid #F0F1EF; gap: 10px;
   }
-  .kategori-summary .col-title{
-    font-size:12px;
-    text-transform:uppercase;
-    letter-spacing:0.5px;
-    font-weight:700;
-    margin-bottom:8px;
-    padding-bottom:6px;
-    border-bottom:1px solid var(--line);
+  .baris-transaksi:last-child { border-bottom: none; }
+  .ket { font-size: 14px; font-weight: 600; }
+  .tgl { font-size: 12px; color: #9CA3AF; }
+  .jumlah { font-size: 14px; font-weight: 700; white-space: nowrap; }
+  .aksi-btn {
+    background: #F0F1EF; border: none; border-radius: 8px; width: 30px; height: 30px;
+    display: inline-flex; align-items: center; justify-content: center; cursor: pointer; margin-left: 4px;
   }
-  .kategori-summary .col-title.pemasukan{color:var(--income);}
-  .kategori-summary .col-title.pengeluaran{color:var(--expense);}
-  .kategori-summary .kat-row{
-    display:flex;
-    justify-content:space-between;
-    gap:8px;
-    font-size:13px;
-    padding:4px 0;
+  select {
+    font-size: 12px; padding: 6px 8px; border-radius: 8px; border: 1px solid #E5E7EB;
+    color: #4B5563; background: #F5F6F4; font-family: inherit;
   }
-  .kategori-summary .kat-row .kat-nama{color:var(--ink);}
-  .kategori-summary .kat-row .kat-nominal{font-weight:700;white-space:nowrap;}
-  .kategori-summary .kat-row.pemasukan .kat-nominal{color:var(--income);}
-  .kategori-summary .kat-row.pengeluaran .kat-nominal{color:var(--expense);}
-  .kategori-summary .kat-empty{
-    font-size:12px;
-    color:var(--ink-soft);
-    padding:4px 0;
+  .pesan { margin-top: 10px; font-size: 13px; color: #4F7A5D; text-align: center; }
+  .kosong { font-size: 13px; color: #9CA3AF; text-align: center; padding: 20px 0; }
+  .judul-kartu { font-size: 14px; font-weight: 700; margin-bottom: 12px; }
+  .baris-aksi-data { display: flex; gap: 8px; margin-bottom: 8px; }
+  .btn-tipis {
+    flex: 1; padding: 10px 0; border-radius: 10px; border: 1px solid #E5E7EB;
+    background: #F5F6F4; color: #1B2A41; font-weight: 600; font-size: 13px; cursor: pointer;
   }
-  @media (max-width:520px){
-    .kategori-summary{grid-template-columns:1fr;}
+  .btn-bahaya {
+    width: 100%; padding: 10px 0; border-radius: 10px; border: 1px solid #F3D9CC;
+    background: white; color: #B85C38; font-weight: 600; font-size: 13px; cursor: pointer;
   }
-  .summary{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:10px;
-    margin-bottom:22px;
+  .btn-bahaya.siap { background: #B85C38; color: white; border-color: #B85C38; }
+  svg { vertical-align: middle; }
+  .status-offline {
+    display: none; background: #FEF3C7; color: #92400E; font-size: 12px;
+    padding: 8px 12px; border-radius: 10px; margin-bottom: 12px; text-align: center;
   }
-  .summary .box{
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:10px;
-    padding:14px 12px;
+  @media print {
+    .no-print { display: none !important; }
+    body { background: white; }
   }
-  .summary .label{
-    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-    font-size:11px;
-    text-transform:uppercase;
-    letter-spacing:0.6px;
-    color:var(--ink-soft);
-    margin-bottom:6px;
-  }
-  .summary .value{font-size:19px;font-weight:700;}
-  .summary .income .value{color:var(--income);}
-  .summary .expense .value{color:var(--expense);}
-  .summary .saldo .value{color:var(--ink);}
-
-  form{
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:12px;
-    padding:16px;
-    margin-bottom:20px;
-    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-  }
-  .row{display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
-  .field{flex:1;min-width:130px;display:flex;flex-direction:column;gap:4px;}
-  .field label{font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.5px;}
-  input,select{
-    font-family:inherit;
-    font-size:14px;
-    padding:9px 10px;
-    border:1px solid var(--line);
-    border-radius:7px;
-    background:#fff;
-    color:var(--ink);
-  }
-  input:focus,select:focus{outline:2px solid var(--accent);outline-offset:1px;}
-
-  .jenis-toggle{display:flex;border:1px solid var(--line);border-radius:7px;overflow:hidden;}
-  .jenis-toggle button{
-    flex:1;
-    padding:9px 10px;
-    border:none;
-    background:#fff;
-    font-family:inherit;
-    font-size:13px;
-    cursor:pointer;
-    color:var(--ink-soft);
-  }
-  .jenis-toggle button.active.pemasukan{background:var(--income-bg);color:var(--income);font-weight:600;}
-  .jenis-toggle button.active.pengeluaran{background:var(--expense-bg);color:var(--expense);font-weight:600;}
-
-  .add-btn{
-    width:100%;
-    padding:11px;
-    background:var(--ink);
-    color:var(--paper);
-    border:none;
-    border-radius:7px;
-    font-family:inherit;
-    font-size:14px;
-    font-weight:600;
-    cursor:pointer;
-    letter-spacing:0.3px;
-  }
-  .add-btn:hover{background:#3a3833;}
-
-  .actions{
-    display:flex;
-    gap:8px;
-    margin-bottom:16px;
-    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-    flex-wrap:wrap;
-  }
-  .actions button{
-    flex:1;
-    min-width:110px;
-    padding:9px 10px;
-    border-radius:7px;
-    border:1px solid var(--line);
-    background:var(--card);
-    font-family:inherit;
-    font-size:13px;
-    cursor:pointer;
-    color:var(--ink);
-  }
-  .actions button:hover{border-color:var(--accent);}
-  .actions button.danger{color:var(--expense);}
-
-  table{
-    width:100%;
-    border-collapse:collapse;
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:10px;
-    overflow:hidden;
-    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-    font-size:13px;
-  }
-  thead{background:#EFEAE0;}
-  th{
-    text-align:left;
-    padding:9px 8px;
-    font-size:11px;
-    text-transform:uppercase;
-    letter-spacing:0.5px;
-    color:var(--ink-soft);
-    border-bottom:1px solid var(--line);
-  }
-  td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top;}
-  tr:last-child td{border-bottom:none;}
-  .pill{
-    display:inline-block;
-    padding:2px 8px;
-    border-radius:20px;
-    font-size:11px;
-    font-weight:600;
-  }
-  .pill.pemasukan{background:var(--income-bg);color:var(--income);}
-  .pill.pengeluaran{background:var(--expense-bg);color:var(--expense);}
-  .nominal{font-weight:700;white-space:nowrap;}
-  .nominal.pemasukan{color:var(--income);}
-  .nominal.pengeluaran{color:var(--expense);}
-  .del-row{
-    background:none;
-    border:none;
-    color:var(--ink-soft);
-    cursor:pointer;
-    font-size:13px;
-  }
-  .del-row:hover{color:var(--expense);}
-  .edit-row{
-    background:none;
-    border:none;
-    color:var(--ink-soft);
-    cursor:pointer;
-    font-size:13px;
-    margin-right:8px;
-  }
-  .edit-row:hover{color:var(--accent);}
-  .row-actions{white-space:nowrap;}
-
-  .edit-banner{
-    display:none;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-    background:var(--income-bg);
-    border:1px solid var(--income);
-    color:var(--income);
-    border-radius:8px;
-    padding:8px 12px;
-    margin-bottom:12px;
-    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-    font-size:13px;
-    font-weight:600;
-  }
-  .edit-banner.active{display:flex;}
-  .edit-banner button{
-    background:none;
-    border:1px solid var(--income);
-    color:var(--income);
-    border-radius:6px;
-    padding:4px 10px;
-    font-family:inherit;
-    font-size:12px;
-    cursor:pointer;
-  }
-
-  .audit-section{
-    margin-top:22px;
-    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-  }
-  .audit-toggle{
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:8px;
-    padding:10px 14px;
-    width:100%;
-    text-align:left;
-    font-family:inherit;
-    font-size:13px;
-    font-weight:600;
-    color:var(--ink);
-    cursor:pointer;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-  }
-  .audit-toggle:hover{border-color:var(--accent);}
-  .audit-log{
-    display:none;
-    background:var(--card);
-    border:1px solid var(--line);
-    border-top:none;
-    border-radius:0 0 8px 8px;
-    max-height:320px;
-    overflow-y:auto;
-  }
-  .audit-log.open{display:block;}
-  .audit-item{
-    padding:10px 14px;
-    border-bottom:1px solid var(--line);
-    font-size:12.5px;
-    line-height:1.5;
-  }
-  .audit-item:last-child{border-bottom:none;}
-  .audit-item .audit-head{
-    display:flex;
-    justify-content:space-between;
-    gap:8px;
-    margin-bottom:3px;
-  }
-  .audit-item .audit-aksi{font-weight:700;}
-  .audit-item .audit-aksi.tambah{color:var(--income);}
-  .audit-item .audit-aksi.edit{color:var(--accent);}
-  .audit-item .audit-aksi.hapus{color:var(--expense);}
-  .audit-item .audit-waktu{color:var(--ink-soft);white-space:nowrap;}
-  .audit-item .audit-detail{color:var(--ink-soft);}
-  .audit-item .audit-detail .lama{text-decoration:line-through;color:var(--expense);}
-  .audit-item .audit-detail .baru{color:var(--income);}
-  .audit-empty{
-    padding:14px;
-    text-align:center;
-    color:var(--ink-soft);
-    font-size:12.5px;
-  }
-  .audit-footer{
-    padding:8px 14px;
-    text-align:right;
-    border-top:1px solid var(--line);
-  }
-  .audit-clear-btn{
-    background:none;
-    border:1px solid var(--line);
-    color:var(--expense);
-    border-radius:6px;
-    padding:5px 10px;
-    font-family:inherit;
-    font-size:12px;
-    cursor:pointer;
-  }
-  .audit-clear-btn:hover{border-color:var(--expense);}
-  .empty{
-    text-align:center;
-    padding:30px 10px;
-    color:var(--ink-soft);
-    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-    font-size:13px;
-  }
-  .note{
-    margin-top:18px;
-    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-    font-size:12px;
-    color:var(--ink-soft);
-    line-height:1.5;
-  }
-  .table-scroll{overflow-x:auto;}
-
-  @media print{
-    body{background:#fff;padding:0;}
-    form,.actions,.note,.edit-banner,.audit-section{display:none;}
-    .summary .box{border:1px solid #999;}
-    table{border:1px solid #999;}
-  }
-  @media (max-width:520px){
-    .summary{grid-template-columns:1fr;}
-    th:nth-child(4),td:nth-child(4){display:none;}
-  }
-  /* Optimasi iPhone / Safari */
-  html{-webkit-text-size-adjust:100%;}
-  body{
-    padding-top:max(24px, env(safe-area-inset-top));
-    padding-right:max(16px, env(safe-area-inset-right));
-    padding-bottom:max(60px, env(safe-area-inset-bottom));
-    padding-left:max(16px, env(safe-area-inset-left));
-  }
-  button,input,select{font-size:16px;} /* mencegah auto-zoom Safari pada input */
-  button{-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
-  input,select{-webkit-appearance:none;appearance:none;}
-  input[type="date"]{-webkit-appearance:auto;appearance:auto;}
-
-  .ios-hint{
-    display:none;
-    margin:0 0 16px;
-    padding:10px 12px;
-    border:1px solid var(--line);
-    border-radius:8px;
-    background:#fff;
-    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-    font-size:12px;
-    line-height:1.5;
-    color:var(--ink-soft);
-  }
-  @media (display-mode: browser){
-    .ios-hint{display:block;}
-  }
-
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header>
-    <h1>LAPORAN KEUANGAN</h1>
-    <p>Pencatatan pemasukan &amp; pengeluaran — data tersimpan di browser perangkat ini.</p>
-    <div class="laporan-field">
-      <label for="namaLaporan">Nama Laporan</label>
-      <input type="text" id="namaLaporan" placeholder="Contoh: Laporan Kas Bulan Agustus 2026">
-    </div>
-    <div class="laporan-field">
-      <label for="dibuatOleh">Dibuat Oleh</label>
-      <input type="text" id="dibuatOleh" placeholder="Nama penyusun laporan">
-    </div>
-  </header>
+  <h1>Catatan Keuangan</h1>
+  <div class="pil" id="tanggalHariIni"></div>
+  <div class="status-offline" id="statusOffline">📴 Sedang offline — data tetap aman tersimpan di HP ini.</div>
 
-  <div class="ios-hint" id="iosHint">
-    Tip iPhone: buka halaman ini dari Safari. Jika sudah di-host melalui HTTPS, gunakan tombol Bagikan → Tambahkan ke Layar Utama agar tampil seperti aplikasi.
+  <!-- Info Laporan -->
+  <div class="kartu">
+    <label class="label-kecil">Nama Laporan</label>
+    <input type="text" id="namaLaporan" placeholder="Contoh: Laporan Keuangan Pribadi" />
+    <label class="label-kecil">Pelapor</label>
+    <input type="text" id="pelapor" placeholder="Nama Anda" style="margin-bottom:0" />
   </div>
 
-  <div class="summary">
-    <div class="box income">
-      <div class="label">Total Pemasukan</div>
-      <div class="value" id="totalIn">Rp0</div>
-    </div>
-    <div class="box expense">
-      <div class="label">Total Pengeluaran</div>
-      <div class="value" id="totalOut">Rp0</div>
-    </div>
-    <div class="box saldo">
-      <div class="label">Saldo</div>
-      <div class="value" id="saldo">Rp0</div>
+  <!-- Kartu Saldo -->
+  <div class="kartu-saldo">
+    <div style="display:flex;align-items:center;gap:8px;opacity:.75;font-size:13px;">💼 Saldo saat ini</div>
+    <div style="font-size:28px;font-weight:700;margin-top:6px;" id="tampilSaldo">Rp0</div>
+    <div class="ringkasan-baris">
+      <div class="kotak-ringkasan">
+        <div class="kotak-label">↑ Pemasukan</div>
+        <div class="kotak-nilai" id="tampilPemasukan">Rp0</div>
+      </div>
+      <div class="kotak-ringkasan">
+        <div class="kotak-label">↓ Pengeluaran</div>
+        <div class="kotak-nilai" id="tampilPengeluaran">Rp0</div>
+      </div>
     </div>
   </div>
 
-  <div class="kategori-summary">
-    <div class="col">
-      <div class="col-title pemasukan">Jumlah per Kategori — Pemasukan</div>
-      <div id="katPemasukan"></div>
-    </div>
-    <div class="col">
-      <div class="col-title pengeluaran">Jumlah per Kategori — Pengeluaran</div>
-      <div id="katPengeluaran"></div>
-    </div>
+  <!-- Ringkasan Bulanan -->
+  <div class="kartu no-print">
+    <div class="judul-kartu">Ringkasan Bulanan</div>
+    <div id="ringkasanBulanan"></div>
   </div>
 
-  <div class="edit-banner" id="editBanner">
-    <span id="editBannerText">Mengedit transaksi</span>
-    <button type="button" id="cancelEdit">Batal Edit</button>
-  </div>
-
-  <form id="entryForm">
-    <div class="row">
-      <div class="field">
-        <label for="tanggal">Tanggal</label>
-        <input type="date" id="tanggal" required>
-      </div>
-      <div class="field">
-        <label>Jenis</label>
-        <div class="jenis-toggle">
-          <button type="button" id="btnIn" class="active pemasukan">Pemasukan</button>
-          <button type="button" id="btnOut" class="pengeluaran">Pengeluaran</button>
-        </div>
-      </div>
+  <!-- Form Tambah/Edit -->
+  <form class="kartu no-print" id="formTransaksi">
+    <div id="labelEdit" style="display:none;justify-content:space-between;align-items:center;margin-bottom:12px;font-size:13px;color:#B85C38;font-weight:600;">
+      <span>Mengedit transaksi</span>
+      <button type="button" id="batalEdit" style="background:none;border:none;color:#6B7280;cursor:pointer;">✕ Batal</button>
     </div>
-    <div class="row">
-      <div class="field">
-        <label for="kategori">Kategori</label>
-        <input type="text" id="kategori" placeholder="Gaji, Makan, Transport..." required>
-      </div>
-      <div class="field">
-        <label for="nominal">Nominal (Rp)</label>
-        <input type="number" id="nominal" placeholder="0" min="0" required>
-      </div>
+    <div class="baris-2">
+      <button type="button" class="toggle-btn aktif-masuk" id="btnPemasukan">Pemasukan</button>
+      <button type="button" class="toggle-btn" id="btnPengeluaran">Pengeluaran</button>
     </div>
-    <div class="row">
-      <div class="field">
-        <label for="catatan">Catatan (opsional)</label>
-        <input type="text" id="catatan" placeholder="Keterangan tambahan">
-      </div>
-    </div>
-    <button type="submit" class="add-btn" id="submitBtn">Tambah</button>
+    <label class="label-kecil">Jumlah (Rp)</label>
+    <input type="text" inputmode="numeric" id="inputJumlah" placeholder="Contoh: 50000" />
+    <label class="label-kecil">Keterangan (opsional)</label>
+    <input type="text" id="inputKeterangan" placeholder="Contoh: Gaji, Makan siang, dll" />
+    <button type="submit" class="btn-utama" id="btnSimpan">+ Simpan Transaksi</button>
+    <div class="pesan" id="pesanForm"></div>
   </form>
 
-  <div class="actions">
-    <button id="exportPdf">Export PDF</button>
-    <button id="exportCsv">Export CSV</button>
-    <button id="backupData">Backup Data</button>
-    <button id="restoreData">Restore Data</button>
-    <input type="file" id="restoreFileInput" accept="application/json" style="display:none;">
-    <button id="clearAll" class="danger">Hapus Semua</button>
+  <!-- Rincian Transaksi -->
+  <div class="kartu">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:8px;">
+      <div class="judul-kartu" style="margin:0;">Rincian Transaksi</div>
+      <select id="filterBulan" class="no-print"><option value="semua">Semua bulan</option></select>
+    </div>
+    <div id="daftarTransaksi"></div>
   </div>
 
-  <div class="table-scroll">
-    <table>
-      <thead>
-        <tr>
-          <th>Tanggal</th>
-          <th>Jenis</th>
-          <th>Kategori</th>
-          <th>Catatan</th>
-          <th>Nominal</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody id="tbody"></tbody>
-    </table>
-    <div class="empty" id="emptyMsg" style="display:none;">Belum ada catatan. Tambahkan transaksi pertama Anda di atas.</div>
-  </div>
+  <button class="btn-luar no-print" id="btnExportLaporan">🖨️ Export / Cetak Laporan (PDF)</button>
+  <p class="no-print" style="font-size:11px;color:#9CA3AF;text-align:center;margin-top:6px;">
+    Akan membuka dialog cetak HP Anda — pilih "Simpan sebagai PDF".
+  </p>
 
-  <div class="audit-section">
-    <button type="button" class="audit-toggle" id="auditToggle">
-      <span>🔍 Riwayat Audit (perubahan &amp; koreksi data)</span>
-      <span id="auditCount">0</span>
-    </button>
-    <div class="audit-log" id="auditLog"></div>
+  <!-- Pengaturan Data -->
+  <div class="kartu no-print" style="margin-top:16px;">
+    <div class="judul-kartu" style="margin-bottom:4px;">Pengaturan Data</div>
+    <p style="font-size:12px;color:#9CA3AF;margin:0 0 12px;">Semua data tersimpan langsung di HP ini (offline), tidak dikirim ke server mana pun.</p>
+    <div class="baris-aksi-data">
+      <button class="btn-tipis" id="btnBackup">⬇ Backup Data</button>
+      <button class="btn-tipis" id="btnPilihImpor">⬆ Impor Data</button>
+      <input type="file" accept="application/json" id="inputImpor" style="display:none" />
+    </div>
+    <button class="btn-bahaya" id="btnHapusSemua">⚠ Hapus Semua Data</button>
+    <div class="pesan" id="pesanData"></div>
   </div>
-  <div class="audit-footer" id="auditFooter" style="display:none;">
-    <button type="button" class="audit-clear-btn" id="auditClearBtn">Hapus Riwayat Audit</button>
-  </div>
-
-  <p class="note">Untuk PDF: tekan "Export PDF", lalu pilih "Save as PDF / Simpan sebagai PDF" di dialog cetak.</p>
 </div>
 
 <script>
-const STORAGE_KEY = 'catatan-keuangan-entries';
-const STORAGE_KEY_LAPORAN = 'catatan-keuangan-nama-laporan';
-const STORAGE_KEY_PEMBUAT = 'catatan-keuangan-dibuat-oleh';
-const STORAGE_KEY_AUDIT = 'catatan-keuangan-audit-log';
-let entries = [];
-let auditLog = [];
-let jenisAktif = 'pemasukan';
-let editingId = null;
+// ====== PENYIMPANAN LOKAL (tidak ke server manapun) ======
+const KUNCI_TRANSAKSI = "ck_transaksi";
+const KUNCI_INFO = "ck_info_laporan";
 
-
-function isFileProtocol(){
-  return location.protocol === 'file:';
+function ambilTransaksi() {
+  try { return JSON.parse(localStorage.getItem(KUNCI_TRANSAKSI)) || []; }
+  catch (e) { return []; }
+}
+function simpanTransaksiKeStorage(data) {
+  localStorage.setItem(KUNCI_TRANSAKSI, JSON.stringify(data));
+}
+function ambilInfo() {
+  try { return JSON.parse(localStorage.getItem(KUNCI_INFO)) || { namaLaporan: "", pelapor: "" }; }
+  catch (e) { return { namaLaporan: "", pelapor: "" }; }
+}
+function simpanInfoKeStorage(info) {
+  localStorage.setItem(KUNCI_INFO, JSON.stringify(info));
 }
 
-function showStorageWarningIfNeeded(){
-  if(!isFileProtocol()) return;
-  const hint = document.getElementById('iosHint');
-  if(hint){
-    hint.style.display = 'block';
-    hint.textContent = 'Anda sedang membuka file HTML lokal. Safari iPhone dapat membatasi penyimpanan/fitur tertentu pada file lokal. Untuk penggunaan stabil dan data lebih konsisten, host halaman ini melalui HTTPS lalu buka dari Safari.';
+// ====== STATE ======
+let transaksi = ambilTransaksi();
+let editId = null;
+let jenisAktif = "pemasukan";
+let filterBulan = "semua";
+
+// ====== UTIL ======
+function formatRupiah(angka) { return "Rp" + Math.round(angka).toLocaleString("id-ID"); }
+function formatTanggal(iso) {
+  return new Date(iso).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
+}
+function kunciBulan(iso) {
+  const d = new Date(iso);
+  return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
+}
+function labelBulan(iso) {
+  return new Date(iso).toLocaleDateString("id-ID", { month: "long", year: "numeric" });
+}
+
+// ====== TANGGAL HARI INI ======
+function tampilkanTanggalHariIni() {
+  document.getElementById("tanggalHariIni").textContent =
+    new Date().toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+}
+tampilkanTanggalHariIni();
+setInterval(tampilkanTanggalHariIni, 60000);
+
+// ====== STATUS OFFLINE ======
+function perbaruiStatusOffline() {
+  document.getElementById("statusOffline").style.display = navigator.onLine ? "none" : "block";
+}
+window.addEventListener("online", perbaruiStatusOffline);
+window.addEventListener("offline", perbaruiStatusOffline);
+perbaruiStatusOffline();
+
+// ====== INFO LAPORAN ======
+const info = ambilInfo();
+document.getElementById("namaLaporan").value = info.namaLaporan;
+document.getElementById("pelapor").value = info.pelapor;
+document.getElementById("namaLaporan").addEventListener("input", simpanInfo);
+document.getElementById("pelapor").addEventListener("input", simpanInfo);
+function simpanInfo() {
+  simpanInfoKeStorage({
+    namaLaporan: document.getElementById("namaLaporan").value,
+    pelapor: document.getElementById("pelapor").value,
+  });
+}
+
+// ====== TOGGLE JENIS ======
+const btnPemasukan = document.getElementById("btnPemasukan");
+const btnPengeluaran = document.getElementById("btnPengeluaran");
+function setJenis(jenis) {
+  jenisAktif = jenis;
+  btnPemasukan.className = "toggle-btn" + (jenis === "pemasukan" ? " aktif-masuk" : "");
+  btnPengeluaran.className = "toggle-btn" + (jenis === "pengeluaran" ? " aktif-keluar" : "");
+}
+btnPemasukan.addEventListener("click", () => setJenis("pemasukan"));
+btnPengeluaran.addEventListener("click", () => setJenis("pengeluaran"));
+
+// ====== FORM TAMBAH / EDIT ======
+const form = document.getElementById("formTransaksi");
+const inputJumlah = document.getElementById("inputJumlah");
+const inputKeterangan = document.getElementById("inputKeterangan");
+const labelEdit = document.getElementById("labelEdit");
+const btnSimpan = document.getElementById("btnSimpan");
+const pesanForm = document.getElementById("pesanForm");
+
+function resetForm() {
+  setJenis("pemasukan");
+  inputJumlah.value = "";
+  inputKeterangan.value = "";
+  editId = null;
+  labelEdit.style.display = "none";
+  btnSimpan.textContent = "+ Simpan Transaksi";
+}
+
+document.getElementById("batalEdit").addEventListener("click", resetForm);
+
+form.addEventListener("submit", function (e) {
+  e.preventDefault();
+  const nilai = parseInt(inputJumlah.value.replace(/[^0-9]/g, ""), 10);
+  if (!nilai || nilai <= 0) {
+    tampilkanPesan(pesanForm, "Jumlah harus diisi dengan angka lebih dari 0.");
+    return;
   }
-}
+  const ket = inputKeterangan.value.trim() || (jenisAktif === "pemasukan" ? "Pemasukan" : "Pengeluaran");
 
-const tbody = document.getElementById('tbody');
-const emptyMsg = document.getElementById('emptyMsg');
-const totalInEl = document.getElementById('totalIn');
-const totalOutEl = document.getElementById('totalOut');
-const saldoEl = document.getElementById('saldo');
-const btnIn = document.getElementById('btnIn');
-const btnOut = document.getElementById('btnOut');
-const namaLaporanInput = document.getElementById('namaLaporan');
-const dibuatOlehInput = document.getElementById('dibuatOleh');
-const katPemasukanEl = document.getElementById('katPemasukan');
-const katPengeluaranEl = document.getElementById('katPengeluaran');
-const editBanner = document.getElementById('editBanner');
-const submitBtn = document.getElementById('submitBtn');
-const auditToggle = document.getElementById('auditToggle');
-const auditLogEl = document.getElementById('auditLog');
-const auditCountEl = document.getElementById('auditCount');
-const auditFooter = document.getElementById('auditFooter');
-const auditClearBtn = document.getElementById('auditClearBtn');
-
-function formatRupiah(n){
-  const rounded = Math.round(n);
-  const sign = rounded < 0 ? '-' : '';
-  return sign + 'Rp' + Math.abs(rounded).toLocaleString('id-ID');
-}
-
-function formatTanggal(d){
-  if(!d) return '';
-  const dt = new Date(d + 'T00:00:00');
-  if(isNaN(dt)) return d;
-  return dt.toLocaleDateString('id-ID', {day:'2-digit',month:'short',year:'numeric'});
-}
-
-function formatWaktuAudit(iso){
-  const dt = new Date(iso);
-  if(isNaN(dt)) return iso;
-  return dt.toLocaleString('id-ID', {day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
-}
-
-function ringkasEntry(e){
-  const jenisLabel = e.jenis === 'pemasukan' ? 'Pemasukan' : 'Pengeluaran';
-  return `${jenisLabel} · ${e.kategori} · ${formatRupiah(e.nominal)} · ${formatTanggal(e.tanggal)}${e.catatan ? ' · ' + e.catatan : ''}`;
-}
-
-function loadEntries(){
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY);
-    entries = raw ? JSON.parse(raw) : [];
-  }catch(e){
-    entries = [];
+  if (editId) {
+    transaksi = transaksi.map((t) =>
+      t.id === editId ? { ...t, jenis: jenisAktif, jumlah: nilai, keterangan: ket } : t
+    );
+    tampilkanPesan(pesanForm, "Transaksi berhasil diperbarui.");
+  } else {
+    transaksi.unshift({
+      id: Date.now().toString(),
+      jenis: jenisAktif,
+      jumlah: nilai,
+      keterangan: ket,
+      tanggal: new Date().toISOString(),
+    });
+    tampilkanPesan(pesanForm, "Transaksi berhasil disimpan.");
   }
+  simpanTransaksiKeStorage(transaksi);
+  resetForm();
+  render();
+});
+
+function tampilkanPesan(el, teks) {
+  el.textContent = teks;
+  setTimeout(() => { el.textContent = ""; }, 2500);
+}
+
+function mulaiEdit(id) {
+  const t = transaksi.find((x) => x.id === id);
+  if (!t) return;
+  editId = id;
+  setJenis(t.jenis);
+  inputJumlah.value = t.jumlah;
+  inputKeterangan.value = t.keterangan;
+  labelEdit.style.display = "flex";
+  btnSimpan.textContent = "✎ Update Transaksi";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function hapusTransaksi(id) {
+  if (!confirm("Hapus transaksi ini?")) return;
+  transaksi = transaksi.filter((t) => t.id !== id);
+  simpanTransaksiKeStorage(transaksi);
+  if (editId === id) resetForm();
   render();
 }
 
-function loadAuditLog(){
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY_AUDIT);
-    auditLog = raw ? JSON.parse(raw) : [];
-  }catch(e){
-    auditLog = [];
-  }
-  renderAuditLog();
-}
+// ====== FILTER BULAN ======
+document.getElementById("filterBulan").addEventListener("change", (e) => {
+  filterBulan = e.target.value;
+  render();
+});
 
-function saveAuditLog(){
-  try{
-    localStorage.setItem(STORAGE_KEY_AUDIT, JSON.stringify(auditLog));
-  }catch(e){
-    console.error('Gagal menyimpan riwayat audit', e);
-  }
-}
+// ====== RENDER ======
+function render() {
+  const totalPemasukan = transaksi.filter((t) => t.jenis === "pemasukan").reduce((a, t) => a + t.jumlah, 0);
+  const totalPengeluaran = transaksi.filter((t) => t.jenis === "pengeluaran").reduce((a, t) => a + t.jumlah, 0);
+  const saldo = totalPemasukan - totalPengeluaran;
 
-function catatAudit(aksi, detail){
-  auditLog.unshift({
-    id: Date.now().toString(36) + Math.random().toString(36).slice(2,7),
-    waktu: new Date().toISOString(),
-    aksi, // 'tambah' | 'edit' | 'hapus'
-    detail // { lama, baru } masing-masing string ringkasan atau null
+  document.getElementById("tampilSaldo").textContent = formatRupiah(saldo);
+  document.getElementById("tampilPemasukan").textContent = formatRupiah(totalPemasukan);
+  document.getElementById("tampilPengeluaran").textContent = formatRupiah(totalPengeluaran);
+
+  // Ringkasan bulanan
+  const peta = {};
+  transaksi.forEach((t) => {
+    const k = kunciBulan(t.tanggal);
+    if (!peta[k]) peta[k] = { kunci: k, label: labelBulan(t.tanggal), pemasukan: 0, pengeluaran: 0 };
+    if (t.jenis === "pemasukan") peta[k].pemasukan += t.jumlah; else peta[k].pengeluaran += t.jumlah;
   });
-  saveAuditLog();
-  renderAuditLog();
-}
+  const daftarBulan = Object.values(peta).sort((a, b) => (a.kunci < b.kunci ? 1 : -1));
 
-function renderAuditLog(){
-  auditCountEl.textContent = auditLog.length;
-  auditFooter.style.display = auditLog.length === 0 ? 'none' : 'block';
+  const elRingkasan = document.getElementById("ringkasanBulanan");
+  elRingkasan.innerHTML = daftarBulan.length === 0
+    ? '<p class="kosong">Belum ada data untuk ditampilkan per bulan.</p>'
+    : daftarBulan.map((b) => {
+        const selisih = b.pemasukan - b.pengeluaran;
+        return `<div style="padding:10px 0;border-bottom:1px solid #F0F1EF;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <span style="font-size:13px;font-weight:600;text-transform:capitalize;">${b.label}</span>
+            <span style="font-size:13px;font-weight:700;color:${selisih >= 0 ? "#4F7A5D" : "#B85C38"};">
+              ${selisih >= 0 ? "+" : "-"}${formatRupiah(Math.abs(selisih))}
+            </span>
+          </div>
+          <div style="display:flex;gap:12px;font-size:12px;color:#6B7280;">
+            <span>Masuk: ${formatRupiah(b.pemasukan)}</span><span>Keluar: ${formatRupiah(b.pengeluaran)}</span>
+          </div>
+        </div>`;
+      }).join("");
 
-  if(auditLog.length === 0){
-    auditLogEl.innerHTML = '<div class="audit-empty">Belum ada riwayat perubahan.</div>';
-    return;
-  }
+  // Dropdown filter bulan
+  const selFilter = document.getElementById("filterBulan");
+  const nilaiTerpilih = filterBulan;
+  selFilter.innerHTML = '<option value="semua">Semua bulan</option>' +
+    daftarBulan.map((b) => `<option value="${b.kunci}">${b.label}</option>`).join("");
+  selFilter.value = nilaiTerpilih;
 
-  const aksiLabel = { tambah: 'DITAMBAHKAN', edit: 'DIKOREKSI', hapus: 'DIHAPUS' };
-
-  auditLogEl.innerHTML = auditLog.map(item => {
-    let detailHtml = '';
-    if(item.aksi === 'edit'){
-      detailHtml = `<div class="audit-detail"><span class="lama">${escapeHtml(item.detail.lama)}</span><br>→ <span class="baru">${escapeHtml(item.detail.baru)}</span></div>`;
-    } else {
-      detailHtml = `<div class="audit-detail">${escapeHtml(item.detail.baru || item.detail.lama || '')}</div>`;
-    }
-    return `
-      <div class="audit-item">
-        <div class="audit-head">
-          <span class="audit-aksi ${item.aksi}">${aksiLabel[item.aksi] || item.aksi}</span>
-          <span class="audit-waktu">${formatWaktuAudit(item.waktu)}</span>
+  // Daftar transaksi (sesuai filter)
+  const tampil = filterBulan === "semua" ? transaksi : transaksi.filter((t) => kunciBulan(t.tanggal) === filterBulan);
+  const elDaftar = document.getElementById("daftarTransaksi");
+  if (tampil.length === 0) {
+    elDaftar.innerHTML = `<p class="kosong">${transaksi.length === 0 ? "Belum ada transaksi. Tambahkan transaksi pertama Anda di atas." : "Tidak ada transaksi pada bulan ini."}</p>`;
+  } else {
+    elDaftar.innerHTML = tampil.map((t) => `
+      <div class="baris-transaksi">
+        <div style="min-width:0;">
+          <div class="ket">${escapeHtml(t.keterangan)}</div>
+          <div class="tgl">${formatTanggal(t.tanggal)}</div>
         </div>
-        ${detailHtml}
+        <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+          <div class="jumlah" style="color:${t.jenis === "pemasukan" ? "#4F7A5D" : "#B85C38"};">
+            ${t.jenis === "pemasukan" ? "+" : "-"}${formatRupiah(t.jumlah)}
+          </div>
+          <div class="no-print">
+            <button class="aksi-btn" onclick="mulaiEdit('${t.id}')">✎</button>
+            <button class="aksi-btn" onclick="hapusTransaksi('${t.id}')">🗑</button>
+          </div>
+        </div>
       </div>
-    `;
-  }).join('');
-}
-
-function loadNamaLaporan(){
-  try{
-    const nama = localStorage.getItem(STORAGE_KEY_LAPORAN);
-    if(nama) namaLaporanInput.value = nama;
-  }catch(e){
-    // abaikan
+    `).join("");
   }
 }
 
-function saveNamaLaporan(){
-  try{
-    localStorage.setItem(STORAGE_KEY_LAPORAN, namaLaporanInput.value.trim());
-  }catch(e){
-    console.error('Gagal menyimpan nama laporan', e);
-  }
+function escapeHtml(s) {
+  const d = document.createElement("div");
+  d.textContent = s;
+  return d.innerHTML;
 }
 
-function loadDibuatOleh(){
-  try{
-    const nama = localStorage.getItem(STORAGE_KEY_PEMBUAT);
-    if(nama) dibuatOlehInput.value = nama;
-  }catch(e){
-    // abaikan
-  }
-}
-
-function saveDibuatOleh(){
-  try{
-    localStorage.setItem(STORAGE_KEY_PEMBUAT, dibuatOlehInput.value.trim());
-  }catch(e){
-    console.error('Gagal menyimpan nama pembuat laporan', e);
-  }
-}
-
-function saveEntries(){
-  try{
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
-  }catch(e){
-    console.error('Gagal menyimpan data', e);
-    alert('Gagal menyimpan data ke penyimpanan lokal browser.');
-  }
-}
-
-function render(){
-  tbody.innerHTML = '';
-  if(entries.length === 0){
-    emptyMsg.style.display = 'block';
-  } else {
-    emptyMsg.style.display = 'none';
-  }
-
-  const sorted = [...entries].sort((a,b) => (a.tanggal < b.tanggal ? 1 : -1));
-
-  let totalIn = 0, totalOut = 0;
-  entries.forEach(e => {
-    if(e.jenis === 'pemasukan') totalIn += Number(e.nominal);
-    else totalOut += Number(e.nominal);
-  });
-
-  sorted.forEach(e => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${formatTanggal(e.tanggal)}</td>
-      <td><span class="pill ${e.jenis}">${e.jenis === 'pemasukan' ? 'Masuk' : 'Keluar'}</span></td>
-      <td>${escapeHtml(e.kategori)}</td>
-      <td>${escapeHtml(e.catatan || '-')}</td>
-      <td class="nominal ${e.jenis}">${e.jenis === 'pemasukan' ? '+' : '-'}${formatRupiah(e.nominal)}</td>
-      <td class="row-actions">
-        <button class="edit-row" data-id="${e.id}" title="Edit">✎</button>
-        <button class="del-row" data-id="${e.id}" title="Hapus">✕</button>
-      </td>
-    `;
-    tbody.appendChild(tr);
-  });
-
-  const saldo = totalIn - totalOut;
-  totalInEl.textContent = formatRupiah(totalIn);
-  totalOutEl.textContent = formatRupiah(totalOut);
-  saldoEl.textContent = formatRupiah(saldo);
-  saldoEl.style.color = saldo < 0 ? 'var(--expense)' : saldo > 0 ? 'var(--income)' : 'var(--ink)';
-
-  renderKategoriSummary();
-
-  document.querySelectorAll('.del-row').forEach(btn => {
-    btn.addEventListener('click', () => deleteEntry(btn.dataset.id));
-  });
-  document.querySelectorAll('.edit-row').forEach(btn => {
-    btn.addEventListener('click', () => startEdit(btn.dataset.id));
-  });
-}
-
-function renderKategoriSummary(){
-  const totals = { pemasukan: {}, pengeluaran: {} };
-
-  entries.forEach(e => {
-    const grup = totals[e.jenis];
-    const key = e.kategori || '(Tanpa kategori)';
-    grup[key] = (grup[key] || 0) + Number(e.nominal);
-  });
-
-  renderKategoriKolom(katPemasukanEl, totals.pemasukan, 'pemasukan');
-  renderKategoriKolom(katPengeluaranEl, totals.pengeluaran, 'pengeluaran');
-}
-
-function renderKategoriKolom(container, totalsObj, jenis){
-  const kategoriList = Object.keys(totalsObj).sort((a,b) => totalsObj[b] - totalsObj[a]);
-
-  if(kategoriList.length === 0){
-    container.innerHTML = '<div class="kat-empty">Belum ada data.</div>';
-    return;
-  }
-
-  container.innerHTML = kategoriList.map(kat => `
-    <div class="kat-row ${jenis}">
-      <span class="kat-nama">${escapeHtml(kat)}</span>
-      <span class="kat-nominal">${formatRupiah(totalsObj[kat])}</span>
-    </div>
-  `).join('');
-}
-
-function escapeHtml(str){
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
-}
-
-function deleteEntry(id){
-  const target = entries.find(e => e.id === id);
-  if(!target) return;
-  if(!confirm('Hapus transaksi ini? Tindakan ini akan tercatat di riwayat audit.')) return;
-  entries = entries.filter(e => e.id !== id);
-  saveEntries();
-  catatAudit('hapus', { lama: ringkasEntry(target), baru: null });
-  if(editingId === id) cancelEdit();
-  render();
-}
-
-function startEdit(id){
-  const target = entries.find(e => e.id === id);
-  if(!target) return;
-  editingId = id;
-
-  document.getElementById('tanggal').value = target.tanggal;
-  document.getElementById('kategori').value = target.kategori;
-  document.getElementById('nominal').value = target.nominal;
-  document.getElementById('catatan').value = target.catatan || '';
-  jenisAktif = target.jenis;
-  if(jenisAktif === 'pemasukan'){
-    btnIn.classList.add('active');
-    btnOut.classList.remove('active');
-  } else {
-    btnOut.classList.add('active');
-    btnIn.classList.remove('active');
-  }
-
-  editBanner.classList.add('active');
-  submitBtn.textContent = 'Update Transaksi';
-  document.getElementById('entryForm').scrollIntoView({behavior:'smooth', block:'start'});
-}
-
-function cancelEdit(){
-  editingId = null;
-  editBanner.classList.remove('active');
-  submitBtn.textContent = 'Tambah';
-  document.getElementById('entryForm').reset();
-  document.getElementById('tanggal').valueAsDate = new Date();
-  jenisAktif = 'pemasukan';
-  btnIn.classList.add('active');
-  btnOut.classList.remove('active');
-}
-
-btnIn.addEventListener('click', () => {
-  jenisAktif = 'pemasukan';
-  btnIn.classList.add('active');
-  btnOut.classList.remove('active');
-});
-btnOut.addEventListener('click', () => {
-  jenisAktif = 'pengeluaran';
-  btnOut.classList.add('active');
-  btnIn.classList.remove('active');
-});
-
-document.getElementById('entryForm').addEventListener('submit', (ev) => {
-  ev.preventDefault();
-  const tanggal = document.getElementById('tanggal').value;
-  const kategori = document.getElementById('kategori').value.trim();
-  const nominal = parseFloat(document.getElementById('nominal').value);
-  const catatan = document.getElementById('catatan').value.trim();
-
-  if(!tanggal || !kategori || isNaN(nominal) || nominal <= 0){
-    alert('Mohon lengkapi tanggal, kategori, dan nominal dengan benar.');
-    return;
-  }
-
-  if(editingId){
-    const idx = entries.findIndex(e => e.id === editingId);
-    if(idx === -1){
-      cancelEdit();
-      return;
-    }
-    const lama = ringkasEntry(entries[idx]);
-    const updated = { ...entries[idx], tanggal, jenis: jenisAktif, kategori, nominal, catatan };
-    entries[idx] = updated;
-    saveEntries();
-    catatAudit('edit', { lama, baru: ringkasEntry(updated) });
-    cancelEdit();
-  } else {
-    const baru = {
-      id: Date.now().toString(36) + Math.random().toString(36).slice(2,7),
-      tanggal, jenis: jenisAktif, kategori, nominal, catatan
-    };
-    entries.push(baru);
-    saveEntries();
-    catatAudit('tambah', { lama: null, baru: ringkasEntry(baru) });
-    ev.target.reset();
-    document.getElementById('tanggal').value = tanggal;
-  }
-
-  render();
-});
-
-document.getElementById('backupData').addEventListener('click', () => {
-  const backup = {
-    tipe: 'catatan-keuangan-backup',
-    versi: 1,
-    tanggalBackup: new Date().toISOString(),
-    namaLaporan: namaLaporanInput.value.trim(),
-    dibuatOleh: dibuatOlehInput.value.trim(),
-    entries: entries,
-    auditLog: auditLog
-  };
-  const blob = new Blob([JSON.stringify(backup, null, 2)], {type:'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  const tanggalFile = new Date().toISOString().slice(0,10);
-  a.download = `backup-catatan-keuangan-${tanggalFile}.json`;
-  document.body.appendChild(a);
-  a.click();
-  setTimeout(() => {
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }, 0);
-});
-
-document.getElementById('restoreData').addEventListener('click', () => {
-  document.getElementById('restoreFileInput').click();
-});
-
-document.getElementById('restoreFileInput').addEventListener('change', (ev) => {
-  const file = ev.target.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    let data;
-    try{
-      data = JSON.parse(e.target.result);
-    } catch(err){
-      alert('File backup tidak valid atau rusak.');
-      ev.target.value = '';
-      return;
-    }
-    if(!data || !Array.isArray(data.entries)){
-      alert('File backup tidak valid: format data tidak dikenali.');
-      ev.target.value = '';
-      return;
-    }
-    if(!confirm('Pulihkan data dari file backup ini? Data yang ada saat ini akan digantikan.')){
-      ev.target.value = '';
-      return;
-    }
-    entries = data.entries;
-    auditLog = Array.isArray(data.auditLog) ? data.auditLog : [];
-    saveEntries();
-    saveAuditLog();
-    if(typeof data.namaLaporan === 'string'){
-      namaLaporanInput.value = data.namaLaporan;
-      localStorage.setItem(STORAGE_KEY_LAPORAN, data.namaLaporan);
-    }
-    if(typeof data.dibuatOleh === 'string'){
-      dibuatOlehInput.value = data.dibuatOleh;
-      localStorage.setItem(STORAGE_KEY_PEMBUAT, data.dibuatOleh);
-    }
-    render();
-    renderAuditLog();
-    alert('Data berhasil dipulihkan dari backup.');
-    ev.target.value = '';
-  };
-  reader.readAsText(file);
-});
-
-document.getElementById('clearAll').addEventListener('click', () => {
-  if(entries.length === 0) return;
-  if(confirm('Hapus semua catatan? Tindakan ini tidak bisa dibatalkan.')){
-    entries = [];
-    saveEntries();
-    render();
-  }
-});
-
-document.getElementById('exportPdf').addEventListener('click', () => {
+// ====== EXPORT / CETAK LAPORAN ======
+document.getElementById("btnExportLaporan").addEventListener("click", () => {
   window.print();
 });
 
-document.getElementById('exportCsv').addEventListener('click', () => {
-  if(entries.length === 0){
-    alert('Belum ada data untuk diekspor.');
+// ====== BACKUP / IMPOR / HAPUS ======
+const pesanData = document.getElementById("pesanData");
+
+document.getElementById("btnBackup").addEventListener("click", () => {
+  const info = ambilInfo();
+  const paket = { dibuatOleh: "Catatan Keuangan", tanggalBackup: new Date().toISOString(), ...info, transaksi };
+  const blob = new Blob([JSON.stringify(paket, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `backup-catatan-keuangan-${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  tampilkanPesan(pesanData, "Backup berhasil diunduh.");
+});
+
+document.getElementById("btnPilihImpor").addEventListener("click", () => {
+  document.getElementById("inputImpor").click();
+});
+
+document.getElementById("inputImpor").addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (!Array.isArray(data.transaksi)) throw new Error("format salah");
+      if (!confirm(`File ini berisi ${data.transaksi.length} transaksi.\nMengimpor akan MENGGANTI semua data yang ada sekarang. Lanjutkan?`)) return;
+      transaksi = data.transaksi;
+      simpanTransaksiKeStorage(transaksi);
+      simpanInfoKeStorage({ namaLaporan: data.namaLaporan || "", pelapor: data.pelapor || "" });
+      document.getElementById("namaLaporan").value = data.namaLaporan || "";
+      document.getElementById("pelapor").value = data.pelapor || "";
+      tampilkanPesan(pesanData, "Data berhasil diimpor.");
+      render();
+    } catch (err) {
+      tampilkanPesan(pesanData, "Gagal membaca file. Pastikan ini file backup yang benar.");
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = "";
+});
+
+let konfirmasiHapus = false;
+document.getElementById("btnHapusSemua").addEventListener("click", function () {
+  if (!konfirmasiHapus) {
+    konfirmasiHapus = true;
+    this.classList.add("siap");
+    this.textContent = "⚠ Tekan sekali lagi untuk memastikan";
+    setTimeout(() => {
+      konfirmasiHapus = false;
+      this.classList.remove("siap");
+      this.textContent = "⚠ Hapus Semua Data";
+    }, 4000);
     return;
   }
-  const namaLaporan = namaLaporanInput.value.trim();
-  const dibuatOleh = dibuatOlehInput.value.trim();
-  const header = ['Tanggal','Jenis','Kategori','Catatan','Nominal'];
-  const rows = [...entries].sort((a,b)=> (a.tanggal < b.tanggal ? 1 : -1)).map(e => [
-    e.tanggal,
-    e.jenis === 'pemasukan' ? 'Pemasukan' : 'Pengeluaran',
-    e.kategori,
-    e.catatan || '',
-    e.nominal
-  ]);
-  const csvLines = [];
-  if(namaLaporan){
-    csvLines.push([`Nama Laporan: ${namaLaporan}`]);
-  }
-  if(dibuatOleh){
-    csvLines.push([`Dibuat Oleh: ${dibuatOleh}`]);
-  }
-  if(namaLaporan || dibuatOleh){
-    csvLines.push([]);
-  }
-  csvLines.push(header, ...rows);
-  const csvContent = csvLines
-    .map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(','))
-    .join('\n');
-  const blob = new Blob(['\uFEFF' + csvContent], {type:'text/csv;charset=utf-8;'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'catatan-keuangan.csv';
-  document.body.appendChild(a);
-  a.click();
-  setTimeout(() => {
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }, 1000);
+  localStorage.removeItem(KUNCI_TRANSAKSI);
+  localStorage.removeItem(KUNCI_INFO);
+  transaksi = [];
+  document.getElementById("namaLaporan").value = "";
+  document.getElementById("pelapor").value = "";
+  resetForm();
+  konfirmasiHapus = false;
+  this.classList.remove("siap");
+  this.textContent = "⚠ Hapus Semua Data";
+  tampilkanPesan(pesanData, "Semua data berhasil dihapus.");
+  render();
 });
 
-document.getElementById('cancelEdit').addEventListener('click', cancelEdit);
-
-auditToggle.addEventListener('click', () => {
-  auditLogEl.classList.toggle('open');
-});
-
-auditClearBtn.addEventListener('click', (e) => {
-  e.stopPropagation();
-  if(auditLog.length === 0) return;
-  if(!confirm('Hapus semua riwayat audit? Tindakan ini tidak bisa dibatalkan dan tidak memengaruhi data transaksi.')) return;
-  auditLog = [];
-  saveAuditLog();
-  renderAuditLog();
-});
-
-namaLaporanInput.addEventListener('input', saveNamaLaporan);
-dibuatOlehInput.addEventListener('input', saveDibuatOleh);
-
-// set default date to today
-document.getElementById('tanggal').valueAsDate = new Date();
-
-loadNamaLaporan();
-loadDibuatOleh();
-loadEntries();
-loadAuditLog();
-showStorageWarningIfNeeded();
-
-// Daftarkan service worker hanya jika halaman dijalankan dari HTTP/HTTPS.
-// Service worker tidak dapat digunakan secara normal dari file:// lokal.
-if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(err => {
-      console.warn('Service worker gagal didaftarkan:', err);
-    });
+// ====== DAFTARKAN SERVICE WORKER (supaya bisa offline) ======
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").catch(() => {});
   });
 }
+
+// ====== MULAI ======
+render();
 </script>
 </body>
 </html>
