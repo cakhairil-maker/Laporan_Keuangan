@@ -100,29 +100,32 @@
 </head>
 <body>
 <div class="wrap">
-  <h1>Catatan Keuangan</h1>
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
+    <h1 id="txJudulApp">Catatan Keuangan</h1>
+    <select id="pilihBahasa" class="no-print" style="margin-top:2px;"></select>
+  </div>
   <div class="pil" id="tanggalHariIni"></div>
-  <div class="status-offline" id="statusOffline">📴 Sedang offline — data tetap aman tersimpan di HP ini.</div>
+  <div class="status-offline" id="statusOffline"></div>
 
   <!-- Info Laporan -->
   <div class="kartu">
-    <label class="label-kecil">Nama Laporan</label>
+    <label class="label-kecil" id="txLabelNamaLaporan">Nama Laporan</label>
     <input type="text" id="namaLaporan" placeholder="Contoh: Laporan Keuangan Pribadi" />
-    <label class="label-kecil">Pelapor</label>
+    <label class="label-kecil" id="txLabelPelapor">Pelapor</label>
     <input type="text" id="pelapor" placeholder="Nama Anda" style="margin-bottom:0" />
   </div>
 
   <!-- Kartu Saldo -->
   <div class="kartu-saldo">
-    <div style="display:flex;align-items:center;gap:8px;opacity:.75;font-size:13px;">💼 Saldo saat ini</div>
+    <div style="display:flex;align-items:center;gap:8px;opacity:.75;font-size:13px;" id="txSaldoSaatIni">💼 Saldo saat ini</div>
     <div style="font-size:28px;font-weight:700;margin-top:6px;" id="tampilSaldo">Rp0</div>
     <div class="ringkasan-baris">
       <div class="kotak-ringkasan">
-        <div class="kotak-label">↑ Pemasukan</div>
+        <div class="kotak-label" id="txKotakPemasukan">↑ Pemasukan</div>
         <div class="kotak-nilai" id="tampilPemasukan">Rp0</div>
       </div>
       <div class="kotak-ringkasan">
-        <div class="kotak-label">↓ Pengeluaran</div>
+        <div class="kotak-label" id="txKotakPengeluaran">↓ Pengeluaran</div>
         <div class="kotak-nilai" id="tampilPengeluaran">Rp0</div>
       </div>
     </div>
@@ -130,23 +133,23 @@
 
   <!-- Ringkasan Bulanan -->
   <div class="kartu no-print">
-    <div class="judul-kartu">Ringkasan Bulanan</div>
+    <div class="judul-kartu" id="txRingkasanBulananJudul">Ringkasan Bulanan</div>
     <div id="ringkasanBulanan"></div>
   </div>
 
   <!-- Form Tambah/Edit -->
   <form class="kartu no-print" id="formTransaksi">
     <div id="labelEdit" style="display:none;justify-content:space-between;align-items:center;margin-bottom:12px;font-size:13px;color:#B85C38;font-weight:600;">
-      <span>Mengedit transaksi</span>
-      <button type="button" id="batalEdit" style="background:none;border:none;color:#6B7280;cursor:pointer;">✕ Batal</button>
+      <span id="txMengeditTransaksi">Mengedit transaksi</span>
+      <button type="button" id="batalEdit" style="background:none;border:none;color:#6B7280;cursor:pointer;">✕ <span id="txBatal">Batal</span></button>
     </div>
     <div class="baris-2">
       <button type="button" class="toggle-btn aktif-masuk" id="btnPemasukan">Pemasukan</button>
       <button type="button" class="toggle-btn" id="btnPengeluaran">Pengeluaran</button>
     </div>
-    <label class="label-kecil">Jumlah (Rp)</label>
+    <label class="label-kecil" id="txLabelJumlah">Jumlah (Rp)</label>
     <input type="text" inputmode="numeric" id="inputJumlah" placeholder="Contoh: 50000" />
-    <label class="label-kecil">Keterangan (opsional)</label>
+    <label class="label-kecil" id="txLabelKeterangan">Keterangan (opsional)</label>
     <input type="text" id="inputKeterangan" placeholder="Contoh: Gaji, Makan siang, dll" />
     <button type="submit" class="btn-utama" id="btnSimpan">+ Simpan Transaksi</button>
     <div class="pesan" id="pesanForm"></div>
@@ -155,24 +158,24 @@
   <!-- Rincian Transaksi -->
   <div class="kartu">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:8px;">
-      <div class="judul-kartu" style="margin:0;">Rincian Transaksi</div>
-      <select id="filterBulan" class="no-print"><option value="semua">Semua bulan</option></select>
+      <div class="judul-kartu" style="margin:0;" id="txRincianTransaksiJudul">Rincian Transaksi</div>
+      <select id="filterBulan" class="no-print"></select>
     </div>
     <div id="daftarTransaksi"></div>
   </div>
 
-  <button class="btn-luar no-print" id="btnExportLaporan">🖨️ Export / Cetak Laporan (PDF)</button>
-  <p class="no-print" style="font-size:11px;color:#9CA3AF;text-align:center;margin-top:6px;">
+  <button class="btn-luar no-print" id="btnExportLaporan">🖨️ <span id="txExportBtn">Export / Cetak Laporan (PDF)</span></button>
+  <p class="no-print" style="font-size:11px;color:#9CA3AF;text-align:center;margin-top:6px;" id="txExportCatatan">
     Akan membuka dialog cetak HP Anda — pilih "Simpan sebagai PDF".
   </p>
 
   <!-- Pengaturan Data -->
   <div class="kartu no-print" style="margin-top:16px;">
-    <div class="judul-kartu" style="margin-bottom:4px;">Pengaturan Data</div>
-    <p style="font-size:12px;color:#9CA3AF;margin:0 0 12px;">Semua data tersimpan langsung di HP ini (offline), tidak dikirim ke server mana pun.</p>
+    <div class="judul-kartu" style="margin-bottom:4px;" id="txPengaturanDataJudul">Pengaturan Data</div>
+    <p style="font-size:12px;color:#9CA3AF;margin:0 0 12px;" id="txPengaturanDataDesc">Semua data tersimpan langsung di HP ini (offline), tidak dikirim ke server mana pun.</p>
     <div class="baris-aksi-data">
-      <button class="btn-tipis" id="btnBackup">⬇ Backup Data</button>
-      <button class="btn-tipis" id="btnPilihImpor">⬆ Impor Data</button>
+      <button class="btn-tipis" id="btnBackup">⬇ <span id="txBackupBtn">Backup Data</span></button>
+      <button class="btn-tipis" id="btnPilihImpor">⬆ <span id="txImporBtn">Impor Data</span></button>
       <input type="file" accept="application/json" id="inputImpor" style="display:none" />
     </div>
     <button class="btn-bahaya" id="btnHapusSemua">⚠ Hapus Semua Data</button>
@@ -181,6 +184,547 @@
 </div>
 
 <script>
+// ====== PENERJEMAH BAHASA (20 bahasa utama dunia) ======
+const KUNCI_BAHASA = "ck_bahasa";
+const BAHASA = {
+  id: { nama: "Bahasa Indonesia", kode: "id-ID", arah: "ltr", teks: {
+    judulApp: "Catatan Keuangan", labelNamaLaporan: "Nama Laporan", labelPelapor: "Pelapor",
+    saldoSaatIni: "💼 Saldo saat ini", kotakPemasukan: "↑ Pemasukan", kotakPengeluaran: "↓ Pengeluaran",
+    ringkasanBulananJudul: "Ringkasan Bulanan", ringkasanKosong: "Belum ada data untuk ditampilkan per bulan.",
+    masuk: "Masuk", keluar: "Keluar", mengeditTransaksi: "Mengedit transaksi", batal: "Batal",
+    pemasukan: "Pemasukan", pengeluaran: "Pengeluaran", labelJumlah: "Jumlah (Rp)",
+    labelKeterangan: "Keterangan (opsional)", simpanBtn: "+ Simpan Transaksi", updateBtn: "✎ Update Transaksi",
+    rincianTransaksiJudul: "Rincian Transaksi", semuaBulan: "Semua bulan",
+    transaksiKosongAwal: "Belum ada transaksi. Tambahkan transaksi pertama Anda di atas.",
+    transaksiKosongBulan: "Tidak ada transaksi pada bulan ini.", exportBtn: "Export / Cetak Laporan (PDF)",
+    exportCatatan: 'Akan membuka dialog cetak HP Anda — pilih "Simpan sebagai PDF".',
+    pengaturanDataJudul: "Pengaturan Data",
+    pengaturanDataDesc: "Semua data tersimpan langsung di HP ini (offline), tidak dikirim ke server mana pun.",
+    backupBtn: "Backup Data", imporBtn: "Impor Data", hapusSemuaBtn: "⚠ Hapus Semua Data",
+    hapusSemuaKonfirmasi: "⚠ Tekan sekali lagi untuk memastikan",
+    offlineStatus: "📴 Sedang offline — data tetap aman tersimpan di HP ini.", bahasaLabel: "Bahasa",
+    jumlahHarusDiisi: "Jumlah harus diisi dengan angka lebih dari 0.",
+    defaultKetPemasukan: "Pemasukan", defaultKetPengeluaran: "Pengeluaran",
+    transaksiDiperbarui: "Transaksi berhasil diperbarui.", transaksiTersimpan: "Transaksi berhasil disimpan.",
+    hapusTransaksiKonfirmasi: "Hapus transaksi ini?", backupBerhasil: "Backup berhasil diunduh.",
+    imporKonfirmasi: (n) => `File ini berisi ${n} transaksi.\nMengimpor akan MENGGANTI semua data yang ada sekarang. Lanjutkan?`,
+    imporBerhasil: "Data berhasil diimpor.", imporGagal: "Gagal membaca file. Pastikan ini file backup yang benar.",
+    semuaDataDihapus: "Semua data berhasil dihapus.",
+  }},
+  en: { nama: "English", kode: "en-US", arah: "ltr", teks: {
+    judulApp: "Financial Notes", labelNamaLaporan: "Report Name", labelPelapor: "Reported By",
+    saldoSaatIni: "💼 Current balance", kotakPemasukan: "↑ Income", kotakPengeluaran: "↓ Expense",
+    ringkasanBulananJudul: "Monthly Summary", ringkasanKosong: "No monthly data to show yet.",
+    masuk: "In", keluar: "Out", mengeditTransaksi: "Editing transaction", batal: "Cancel",
+    pemasukan: "Income", pengeluaran: "Expense", labelJumlah: "Amount (Rp)",
+    labelKeterangan: "Note (optional)", simpanBtn: "+ Save Transaction", updateBtn: "✎ Update Transaction",
+    rincianTransaksiJudul: "Transaction Details", semuaBulan: "All months",
+    transaksiKosongAwal: "No transactions yet. Add your first one above.",
+    transaksiKosongBulan: "No transactions this month.", exportBtn: "Export / Print Report (PDF)",
+    exportCatatan: 'This opens your phone\'s print dialog — choose "Save as PDF".',
+    pengaturanDataJudul: "Data Settings",
+    pengaturanDataDesc: "All data stays on this device (offline); nothing is sent to any server.",
+    backupBtn: "Back Up Data", imporBtn: "Import Data", hapusSemuaBtn: "⚠ Delete All Data",
+    hapusSemuaKonfirmasi: "⚠ Tap once more to confirm",
+    offlineStatus: "📴 You're offline — your data is still safe on this device.", bahasaLabel: "Language",
+    jumlahHarusDiisi: "Amount must be a number greater than 0.",
+    defaultKetPemasukan: "Income", defaultKetPengeluaran: "Expense",
+    transaksiDiperbarui: "Transaction updated.", transaksiTersimpan: "Transaction saved.",
+    hapusTransaksiKonfirmasi: "Delete this transaction?", backupBerhasil: "Backup downloaded.",
+    imporKonfirmasi: (n) => `This file contains ${n} transactions.\nImporting will REPLACE all current data. Continue?`,
+    imporBerhasil: "Data imported successfully.", imporGagal: "Couldn't read the file. Make sure it's a valid backup file.",
+    semuaDataDihapus: "All data deleted.",
+  }},
+  es: { nama: "Español", kode: "es-ES", arah: "ltr", teks: {
+    judulApp: "Notas Financieras", labelNamaLaporan: "Nombre del Informe", labelPelapor: "Reportado por",
+    saldoSaatIni: "💼 Saldo actual", kotakPemasukan: "↑ Ingresos", kotakPengeluaran: "↓ Gastos",
+    ringkasanBulananJudul: "Resumen Mensual", ringkasanKosong: "Aún no hay datos mensuales para mostrar.",
+    masuk: "Entrada", keluar: "Salida", mengeditTransaksi: "Editando transacción", batal: "Cancelar",
+    pemasukan: "Ingreso", pengeluaran: "Gasto", labelJumlah: "Monto (Rp)",
+    labelKeterangan: "Nota (opcional)", simpanBtn: "+ Guardar Transacción", updateBtn: "✎ Actualizar Transacción",
+    rincianTransaksiJudul: "Detalle de Transacciones", semuaBulan: "Todos los meses",
+    transaksiKosongAwal: "Aún no hay transacciones. Agrega la primera arriba.",
+    transaksiKosongBulan: "No hay transacciones este mes.", exportBtn: "Exportar / Imprimir Informe (PDF)",
+    exportCatatan: 'Se abrirá el diálogo de impresión — elige "Guardar como PDF".',
+    pengaturanDataJudul: "Ajustes de Datos",
+    pengaturanDataDesc: "Todos los datos se guardan en este dispositivo (sin conexión); no se envían a ningún servidor.",
+    backupBtn: "Respaldar Datos", imporBtn: "Importar Datos", hapusSemuaBtn: "⚠ Eliminar Todos los Datos",
+    hapusSemuaKonfirmasi: "⚠ Toca una vez más para confirmar",
+    offlineStatus: "📴 Estás sin conexión — tus datos siguen seguros en este dispositivo.", bahasaLabel: "Idioma",
+    jumlahHarusDiisi: "El monto debe ser un número mayor que 0.",
+    defaultKetPemasukan: "Ingreso", defaultKetPengeluaran: "Gasto",
+    transaksiDiperbarui: "Transacción actualizada.", transaksiTersimpan: "Transacción guardada.",
+    hapusTransaksiKonfirmasi: "¿Eliminar esta transacción?", backupBerhasil: "Respaldo descargado.",
+    imporKonfirmasi: (n) => `Este archivo contiene ${n} transacciones.\nImportar REEMPLAZARÁ todos los datos actuales. ¿Continuar?`,
+    imporBerhasil: "Datos importados correctamente.", imporGagal: "No se pudo leer el archivo. Verifica que sea un respaldo válido.",
+    semuaDataDihapus: "Todos los datos fueron eliminados.",
+  }},
+  fr: { nama: "Français", kode: "fr-FR", arah: "ltr", teks: {
+    judulApp: "Notes Financières", labelNamaLaporan: "Nom du Rapport", labelPelapor: "Rapporté par",
+    saldoSaatIni: "💼 Solde actuel", kotakPemasukan: "↑ Revenus", kotakPengeluaran: "↓ Dépenses",
+    ringkasanBulananJudul: "Résumé Mensuel", ringkasanKosong: "Aucune donnée mensuelle à afficher pour l'instant.",
+    masuk: "Entrée", keluar: "Sortie", mengeditTransaksi: "Modification de la transaction", batal: "Annuler",
+    pemasukan: "Revenu", pengeluaran: "Dépense", labelJumlah: "Montant (Rp)",
+    labelKeterangan: "Note (facultatif)", simpanBtn: "+ Enregistrer la Transaction", updateBtn: "✎ Mettre à Jour",
+    rincianTransaksiJudul: "Détail des Transactions", semuaBulan: "Tous les mois",
+    transaksiKosongAwal: "Aucune transaction pour l'instant. Ajoutez-en une ci-dessus.",
+    transaksiKosongBulan: "Aucune transaction ce mois-ci.", exportBtn: "Exporter / Imprimer le Rapport (PDF)",
+    exportCatatan: 'La boîte de dialogue d\'impression s\'ouvrira — choisissez "Enregistrer en PDF".',
+    pengaturanDataJudul: "Paramètres des Données",
+    pengaturanDataDesc: "Toutes les données restent sur cet appareil (hors ligne); rien n'est envoyé à un serveur.",
+    backupBtn: "Sauvegarder les Données", imporBtn: "Importer des Données", hapusSemuaBtn: "⚠ Supprimer Toutes les Données",
+    hapusSemuaKonfirmasi: "⚠ Appuyez encore une fois pour confirmer",
+    offlineStatus: "📴 Vous êtes hors ligne — vos données restent en sécurité sur cet appareil.", bahasaLabel: "Langue",
+    jumlahHarusDiisi: "Le montant doit être un nombre supérieur à 0.",
+    defaultKetPemasukan: "Revenu", defaultKetPengeluaran: "Dépense",
+    transaksiDiperbarui: "Transaction mise à jour.", transaksiTersimpan: "Transaction enregistrée.",
+    hapusTransaksiKonfirmasi: "Supprimer cette transaction ?", backupBerhasil: "Sauvegarde téléchargée.",
+    imporKonfirmasi: (n) => `Ce fichier contient ${n} transactions.\nL'importation REMPLACERA toutes les données actuelles. Continuer ?`,
+    imporBerhasil: "Données importées avec succès.", imporGagal: "Impossible de lire le fichier. Vérifiez qu'il s'agit d'une sauvegarde valide.",
+    semuaDataDihapus: "Toutes les données ont été supprimées.",
+  }},
+  de: { nama: "Deutsch", kode: "de-DE", arah: "ltr", teks: {
+    judulApp: "Finanznotizen", labelNamaLaporan: "Berichtsname", labelPelapor: "Gemeldet von",
+    saldoSaatIni: "💼 Aktueller Kontostand", kotakPemasukan: "↑ Einnahmen", kotakPengeluaran: "↓ Ausgaben",
+    ringkasanBulananJudul: "Monatsübersicht", ringkasanKosong: "Noch keine monatlichen Daten vorhanden.",
+    masuk: "Ein", keluar: "Aus", mengeditTransaksi: "Transaktion wird bearbeitet", batal: "Abbrechen",
+    pemasukan: "Einnahme", pengeluaran: "Ausgabe", labelJumlah: "Betrag (Rp)",
+    labelKeterangan: "Notiz (optional)", simpanBtn: "+ Transaktion Speichern", updateBtn: "✎ Transaktion Aktualisieren",
+    rincianTransaksiJudul: "Transaktionsdetails", semuaBulan: "Alle Monate",
+    transaksiKosongAwal: "Noch keine Transaktionen. Fügen Sie oben Ihre erste hinzu.",
+    transaksiKosongBulan: "Keine Transaktionen in diesem Monat.", exportBtn: "Bericht Exportieren / Drucken (PDF)",
+    exportCatatan: 'Öffnet den Druckdialog Ihres Telefons — wählen Sie "Als PDF speichern".',
+    pengaturanDataJudul: "Dateneinstellungen",
+    pengaturanDataDesc: "Alle Daten bleiben auf diesem Gerät (offline); nichts wird an einen Server gesendet.",
+    backupBtn: "Daten Sichern", imporBtn: "Daten Importieren", hapusSemuaBtn: "⚠ Alle Daten Löschen",
+    hapusSemuaKonfirmasi: "⚠ Nochmals tippen zum Bestätigen",
+    offlineStatus: "📴 Sie sind offline — Ihre Daten sind weiterhin sicher auf diesem Gerät.", bahasaLabel: "Sprache",
+    jumlahHarusDiisi: "Der Betrag muss eine Zahl größer als 0 sein.",
+    defaultKetPemasukan: "Einnahme", defaultKetPengeluaran: "Ausgabe",
+    transaksiDiperbarui: "Transaktion aktualisiert.", transaksiTersimpan: "Transaktion gespeichert.",
+    hapusTransaksiKonfirmasi: "Diese Transaktion löschen?", backupBerhasil: "Backup heruntergeladen.",
+    imporKonfirmasi: (n) => `Diese Datei enthält ${n} Transaktionen.\nDer Import ERSETZT alle aktuellen Daten. Fortfahren?`,
+    imporBerhasil: "Daten erfolgreich importiert.", imporGagal: "Datei konnte nicht gelesen werden. Stellen Sie sicher, dass es eine gültige Sicherung ist.",
+    semuaDataDihapus: "Alle Daten wurden gelöscht.",
+  }},
+  pt: { nama: "Português", kode: "pt-PT", arah: "ltr", teks: {
+    judulApp: "Notas Financeiras", labelNamaLaporan: "Nome do Relatório", labelPelapor: "Reportado por",
+    saldoSaatIni: "💼 Saldo atual", kotakPemasukan: "↑ Receitas", kotakPengeluaran: "↓ Despesas",
+    ringkasanBulananJudul: "Resumo Mensal", ringkasanKosong: "Ainda não há dados mensais para mostrar.",
+    masuk: "Entrada", keluar: "Saída", mengeditTransaksi: "Editando transação", batal: "Cancelar",
+    pemasukan: "Receita", pengeluaran: "Despesa", labelJumlah: "Valor (Rp)",
+    labelKeterangan: "Nota (opcional)", simpanBtn: "+ Salvar Transação", updateBtn: "✎ Atualizar Transação",
+    rincianTransaksiJudul: "Detalhes das Transações", semuaBulan: "Todos os meses",
+    transaksiKosongAwal: "Ainda não há transações. Adicione a primeira acima.",
+    transaksiKosongBulan: "Nenhuma transação neste mês.", exportBtn: "Exportar / Imprimir Relatório (PDF)",
+    exportCatatan: 'Isso abre a caixa de diálogo de impressão — escolha "Salvar como PDF".',
+    pengaturanDataJudul: "Configurações de Dados",
+    pengaturanDataDesc: "Todos os dados ficam neste dispositivo (offline); nada é enviado a nenhum servidor.",
+    backupBtn: "Fazer Backup", imporBtn: "Importar Dados", hapusSemuaBtn: "⚠ Excluir Todos os Dados",
+    hapusSemuaKonfirmasi: "⚠ Toque mais uma vez para confirmar",
+    offlineStatus: "📴 Você está offline — seus dados continuam seguros neste dispositivo.", bahasaLabel: "Idioma",
+    jumlahHarusDiisi: "O valor deve ser um número maior que 0.",
+    defaultKetPemasukan: "Receita", defaultKetPengeluaran: "Despesa",
+    transaksiDiperbarui: "Transação atualizada.", transaksiTersimpan: "Transação salva.",
+    hapusTransaksiKonfirmasi: "Excluir esta transação?", backupBerhasil: "Backup baixado.",
+    imporKonfirmasi: (n) => `Este arquivo contém ${n} transações.\nImportar SUBSTITUIRÁ todos os dados atuais. Continuar?`,
+    imporBerhasil: "Dados importados com sucesso.", imporGagal: "Não foi possível ler o arquivo. Verifique se é um backup válido.",
+    semuaDataDihapus: "Todos os dados foram excluídos.",
+  }},
+  it: { nama: "Italiano", kode: "it-IT", arah: "ltr", teks: {
+    judulApp: "Note Finanziarie", labelNamaLaporan: "Nome del Report", labelPelapor: "Segnalato da",
+    saldoSaatIni: "💼 Saldo attuale", kotakPemasukan: "↑ Entrate", kotakPengeluaran: "↓ Uscite",
+    ringkasanBulananJudul: "Riepilogo Mensile", ringkasanKosong: "Nessun dato mensile da mostrare ancora.",
+    masuk: "Entrata", keluar: "Uscita", mengeditTransaksi: "Modifica transazione", batal: "Annulla",
+    pemasukan: "Entrata", pengeluaran: "Uscita", labelJumlah: "Importo (Rp)",
+    labelKeterangan: "Nota (opzionale)", simpanBtn: "+ Salva Transazione", updateBtn: "✎ Aggiorna Transazione",
+    rincianTransaksiJudul: "Dettagli Transazioni", semuaBulan: "Tutti i mesi",
+    transaksiKosongAwal: "Nessuna transazione ancora. Aggiungine una sopra.",
+    transaksiKosongBulan: "Nessuna transazione questo mese.", exportBtn: "Esporta / Stampa Report (PDF)",
+    exportCatatan: 'Si aprirà la finestra di stampa — scegli "Salva come PDF".',
+    pengaturanDataJudul: "Impostazioni Dati",
+    pengaturanDataDesc: "Tutti i dati restano su questo dispositivo (offline); nulla viene inviato a un server.",
+    backupBtn: "Backup Dati", imporBtn: "Importa Dati", hapusSemuaBtn: "⚠ Elimina Tutti i Dati",
+    hapusSemuaKonfirmasi: "⚠ Tocca di nuovo per confermare",
+    offlineStatus: "📴 Sei offline — i tuoi dati restano al sicuro su questo dispositivo.", bahasaLabel: "Lingua",
+    jumlahHarusDiisi: "L'importo deve essere un numero maggiore di 0.",
+    defaultKetPemasukan: "Entrata", defaultKetPengeluaran: "Uscita",
+    transaksiDiperbarui: "Transazione aggiornata.", transaksiTersimpan: "Transazione salvata.",
+    hapusTransaksiKonfirmasi: "Eliminare questa transazione?", backupBerhasil: "Backup scaricato.",
+    imporKonfirmasi: (n) => `Questo file contiene ${n} transazioni.\nL'importazione SOSTITUIRÀ tutti i dati attuali. Continuare?`,
+    imporBerhasil: "Dati importati con successo.", imporGagal: "Impossibile leggere il file. Verifica che sia un backup valido.",
+    semuaDataDihapus: "Tutti i dati sono stati eliminati.",
+  }},
+  nl: { nama: "Nederlands", kode: "nl-NL", arah: "ltr", teks: {
+    judulApp: "Financiële Notities", labelNamaLaporan: "Rapportnaam", labelPelapor: "Gerapporteerd door",
+    saldoSaatIni: "💼 Huidig saldo", kotakPemasukan: "↑ Inkomsten", kotakPengeluaran: "↓ Uitgaven",
+    ringkasanBulananJudul: "Maandoverzicht", ringkasanKosong: "Nog geen maandgegevens om te tonen.",
+    masuk: "In", keluar: "Uit", mengeditTransaksi: "Transactie bewerken", batal: "Annuleren",
+    pemasukan: "Inkomst", pengeluaran: "Uitgave", labelJumlah: "Bedrag (Rp)",
+    labelKeterangan: "Notitie (optioneel)", simpanBtn: "+ Transactie Opslaan", updateBtn: "✎ Transactie Bijwerken",
+    rincianTransaksiJudul: "Transactiedetails", semuaBulan: "Alle maanden",
+    transaksiKosongAwal: "Nog geen transacties. Voeg hierboven je eerste toe.",
+    transaksiKosongBulan: "Geen transacties deze maand.", exportBtn: "Rapport Exporteren / Afdrukken (PDF)",
+    exportCatatan: 'Dit opent het afdrukvenster — kies "Opslaan als PDF".',
+    pengaturanDataJudul: "Gegevensinstellingen",
+    pengaturanDataDesc: "Alle gegevens blijven op dit apparaat (offline); niets wordt naar een server gestuurd.",
+    backupBtn: "Back-up Maken", imporBtn: "Gegevens Importeren", hapusSemuaBtn: "⚠ Alle Gegevens Verwijderen",
+    hapusSemuaKonfirmasi: "⚠ Tik nogmaals om te bevestigen",
+    offlineStatus: "📴 Je bent offline — je gegevens blijven veilig op dit apparaat.", bahasaLabel: "Taal",
+    jumlahHarusDiisi: "Het bedrag moet een getal groter dan 0 zijn.",
+    defaultKetPemasukan: "Inkomst", defaultKetPengeluaran: "Uitgave",
+    transaksiDiperbarui: "Transactie bijgewerkt.", transaksiTersimpan: "Transactie opgeslagen.",
+    hapusTransaksiKonfirmasi: "Deze transactie verwijderen?", backupBerhasil: "Back-up gedownload.",
+    imporKonfirmasi: (n) => `Dit bestand bevat ${n} transacties.\nImporteren VERVANGT alle huidige gegevens. Doorgaan?`,
+    imporBerhasil: "Gegevens succesvol geïmporteerd.", imporGagal: "Kan bestand niet lezen. Controleer of dit een geldige back-up is.",
+    semuaDataDihapus: "Alle gegevens zijn verwijderd.",
+  }},
+  ru: { nama: "Русский", kode: "ru-RU", arah: "ltr", teks: {
+    judulApp: "Финансовые Заметки", labelNamaLaporan: "Название Отчёта", labelPelapor: "Составил",
+    saldoSaatIni: "💼 Текущий баланс", kotakPemasukan: "↑ Доход", kotakPengeluaran: "↓ Расход",
+    ringkasanBulananJudul: "Сводка за Месяц", ringkasanKosong: "Пока нет данных за месяцы.",
+    masuk: "Доход", keluar: "Расход", mengeditTransaksi: "Редактирование операции", batal: "Отмена",
+    pemasukan: "Доход", pengeluaran: "Расход", labelJumlah: "Сумма (Rp)",
+    labelKeterangan: "Заметка (необязательно)", simpanBtn: "+ Сохранить Операцию", updateBtn: "✎ Обновить Операцию",
+    rincianTransaksiJudul: "Детали Операций", semuaBulan: "Все месяцы",
+    transaksiKosongAwal: "Пока нет операций. Добавьте первую выше.",
+    transaksiKosongBulan: "В этом месяце операций нет.", exportBtn: "Экспорт / Печать Отчёта (PDF)",
+    exportCatatan: 'Откроется диалог печати — выберите "Сохранить как PDF".',
+    pengaturanDataJudul: "Настройки Данных",
+    pengaturanDataDesc: "Все данные хранятся на этом устройстве (офлайн); ничего не отправляется на сервер.",
+    backupBtn: "Резервная Копия", imporBtn: "Импорт Данных", hapusSemuaBtn: "⚠ Удалить Все Данные",
+    hapusSemuaKonfirmasi: "⚠ Нажмите ещё раз для подтверждения",
+    offlineStatus: "📴 Вы офлайн — данные всё равно в безопасности на устройстве.", bahasaLabel: "Язык",
+    jumlahHarusDiisi: "Сумма должна быть числом больше 0.",
+    defaultKetPemasukan: "Доход", defaultKetPengeluaran: "Расход",
+    transaksiDiperbarui: "Операция обновлена.", transaksiTersimpan: "Операция сохранена.",
+    hapusTransaksiKonfirmasi: "Удалить эту операцию?", backupBerhasil: "Резервная копия загружена.",
+    imporKonfirmasi: (n) => `Этот файл содержит ${n} операций.\nИмпорт ЗАМЕНИТ все текущие данные. Продолжить?`,
+    imporBerhasil: "Данные успешно импортированы.", imporGagal: "Не удалось прочитать файл. Убедитесь, что это верный файл резервной копии.",
+    semuaDataDihapus: "Все данные удалены.",
+  }},
+  tr: { nama: "Türkçe", kode: "tr-TR", arah: "ltr", teks: {
+    judulApp: "Finans Notları", labelNamaLaporan: "Rapor Adı", labelPelapor: "Raporlayan",
+    saldoSaatIni: "💼 Güncel bakiye", kotakPemasukan: "↑ Gelir", kotakPengeluaran: "↓ Gider",
+    ringkasanBulananJudul: "Aylık Özet", ringkasanKosong: "Henüz gösterilecek aylık veri yok.",
+    masuk: "Giren", keluar: "Çıkan", mengeditTransaksi: "İşlem düzenleniyor", batal: "İptal",
+    pemasukan: "Gelir", pengeluaran: "Gider", labelJumlah: "Tutar (Rp)",
+    labelKeterangan: "Not (isteğe bağlı)", simpanBtn: "+ İşlemi Kaydet", updateBtn: "✎ İşlemi Güncelle",
+    rincianTransaksiJudul: "İşlem Detayları", semuaBulan: "Tüm aylar",
+    transaksiKosongAwal: "Henüz işlem yok. Yukarıdan ilkini ekleyin.",
+    transaksiKosongBulan: "Bu ay işlem yok.", exportBtn: "Raporu Dışa Aktar / Yazdır (PDF)",
+    exportCatatan: 'Telefonunuzun yazdırma penceresi açılır — "PDF olarak kaydet" seçin.',
+    pengaturanDataJudul: "Veri Ayarları",
+    pengaturanDataDesc: "Tüm veriler bu cihazda kalır (çevrimdışı); hiçbir sunucuya gönderilmez.",
+    backupBtn: "Yedekle", imporBtn: "Veri İçe Aktar", hapusSemuaBtn: "⚠ Tüm Verileri Sil",
+    hapusSemuaKonfirmasi: "⚠ Onaylamak için tekrar dokunun",
+    offlineStatus: "📴 Çevrimdışısınız — verileriniz bu cihazda güvende kalmaya devam ediyor.", bahasaLabel: "Dil",
+    jumlahHarusDiisi: "Tutar 0'dan büyük bir sayı olmalıdır.",
+    defaultKetPemasukan: "Gelir", defaultKetPengeluaran: "Gider",
+    transaksiDiperbarui: "İşlem güncellendi.", transaksiTersimpan: "İşlem kaydedildi.",
+    hapusTransaksiKonfirmasi: "Bu işlem silinsin mi?", backupBerhasil: "Yedek indirildi.",
+    imporKonfirmasi: (n) => `Bu dosya ${n} işlem içeriyor.\nİçe aktarma mevcut tüm verilerin YERİNİ ALACAK. Devam edilsin mi?`,
+    imporBerhasil: "Veriler başarıyla içe aktarıldı.", imporGagal: "Dosya okunamadı. Geçerli bir yedek dosyası olduğundan emin olun.",
+    semuaDataDihapus: "Tüm veriler silindi.",
+  }},
+  ar: { nama: "العربية", kode: "ar-EG", arah: "rtl", teks: {
+    judulApp: "ملاحظات مالية", labelNamaLaporan: "اسم التقرير", labelPelapor: "أُعِدّ بواسطة",
+    saldoSaatIni: "💼 الرصيد الحالي", kotakPemasukan: "↑ الدخل", kotakPengeluaran: "↓ المصروفات",
+    ringkasanBulananJudul: "الملخص الشهري", ringkasanKosong: "لا توجد بيانات شهرية لعرضها بعد.",
+    masuk: "وارد", keluar: "صادر", mengeditTransaksi: "جارٍ تعديل العملية", batal: "إلغاء",
+    pemasukan: "دخل", pengeluaran: "مصروف", labelJumlah: "المبلغ (Rp)",
+    labelKeterangan: "ملاحظة (اختياري)", simpanBtn: "+ حفظ العملية", updateBtn: "✎ تحديث العملية",
+    rincianTransaksiJudul: "تفاصيل العمليات", semuaBulan: "كل الأشهر",
+    transaksiKosongAwal: "لا توجد عمليات بعد. أضف أول عملية أعلاه.",
+    transaksiKosongBulan: "لا توجد عمليات في هذا الشهر.", exportBtn: "تصدير / طباعة التقرير (PDF)",
+    exportCatatan: 'سيتم فتح نافذة الطباعة في هاتفك — اختر "حفظ كملف PDF".',
+    pengaturanDataJudul: "إعدادات البيانات",
+    pengaturanDataDesc: "تبقى جميع البيانات على هذا الجهاز (بدون اتصال)؛ لا يتم إرسال أي شيء إلى أي خادم.",
+    backupBtn: "نسخ احتياطي للبيانات", imporBtn: "استيراد البيانات", hapusSemuaBtn: "⚠ حذف جميع البيانات",
+    hapusSemuaKonfirmasi: "⚠ اضغط مرة أخرى للتأكيد",
+    offlineStatus: "📴 أنت غير متصل — بياناتك لا تزال آمنة على هذا الجهاز.", bahasaLabel: "اللغة",
+    jumlahHarusDiisi: "يجب أن يكون المبلغ رقمًا أكبر من 0.",
+    defaultKetPemasukan: "دخل", defaultKetPengeluaran: "مصروف",
+    transaksiDiperbarui: "تم تحديث العملية.", transaksiTersimpan: "تم حفظ العملية.",
+    hapusTransaksiKonfirmasi: "هل تريد حذف هذه العملية؟", backupBerhasil: "تم تنزيل النسخة الاحتياطية.",
+    imporKonfirmasi: (n) => `يحتوي هذا الملف على ${n} عملية.\nسيؤدي الاستيراد إلى استبدال جميع البيانات الحالية. متابعة؟`,
+    imporBerhasil: "تم استيراد البيانات بنجاح.", imporGagal: "تعذّرت قراءة الملف. تأكد أنه ملف نسخة احتياطية صالح.",
+    semuaDataDihapus: "تم حذف جميع البيانات.",
+  }},
+  hi: { nama: "हिन्दी", kode: "hi-IN", arah: "ltr", teks: {
+    judulApp: "वित्तीय नोट्स", labelNamaLaporan: "रिपोर्ट का नाम", labelPelapor: "रिपोर्टकर्ता",
+    saldoSaatIni: "💼 वर्तमान शेष", kotakPemasukan: "↑ आय", kotakPengeluaran: "↓ व्यय",
+    ringkasanBulananJudul: "मासिक सारांश", ringkasanKosong: "अभी दिखाने के लिए मासिक डेटा नहीं है।",
+    masuk: "आय", keluar: "व्यय", mengeditTransaksi: "लेन-देन संपादित हो रहा है", batal: "रद्द करें",
+    pemasukan: "आय", pengeluaran: "व्यय", labelJumlah: "राशि (Rp)",
+    labelKeterangan: "नोट (वैकल्पिक)", simpanBtn: "+ लेन-देन सहेजें", updateBtn: "✎ लेन-देन अपडेट करें",
+    rincianTransaksiJudul: "लेन-देन विवरण", semuaBulan: "सभी महीने",
+    transaksiKosongAwal: "अभी कोई लेन-देन नहीं है। ऊपर पहला जोड़ें।",
+    transaksiKosongBulan: "इस महीने कोई लेन-देन नहीं।", exportBtn: "रिपोर्ट निर्यात / प्रिंट करें (PDF)",
+    exportCatatan: 'आपके फोन का प्रिंट डायलॉग खुलेगा — "PDF के रूप में सहेजें" चुनें।',
+    pengaturanDataJudul: "डेटा सेटिंग्स",
+    pengaturanDataDesc: "सभी डेटा इसी डिवाइस पर रहता है (ऑफ़लाइन); कुछ भी किसी सर्वर पर नहीं भेजा जाता।",
+    backupBtn: "डेटा बैकअप करें", imporBtn: "डेटा आयात करें", hapusSemuaBtn: "⚠ सभी डेटा हटाएं",
+    hapusSemuaKonfirmasi: "⚠ पुष्टि के लिए फिर से टैप करें",
+    offlineStatus: "📴 आप ऑफ़लाइन हैं — आपका डेटा इस डिवाइस पर सुरक्षित है।", bahasaLabel: "भाषा",
+    jumlahHarusDiisi: "राशि 0 से बड़ी संख्या होनी चाहिए।",
+    defaultKetPemasukan: "आय", defaultKetPengeluaran: "व्यय",
+    transaksiDiperbarui: "लेन-देन अपडेट हुआ।", transaksiTersimpan: "लेन-देन सहेजा गया।",
+    hapusTransaksiKonfirmasi: "क्या इस लेन-देन को हटाना है?", backupBerhasil: "बैकअप डाउनलोड हुआ।",
+    imporKonfirmasi: (n) => `इस फ़ाइल में ${n} लेन-देन हैं।\nआयात करने से सभी मौजूदा डेटा बदल जाएगा। जारी रखें?`,
+    imporBerhasil: "डेटा सफलतापूर्वक आयात हुआ।", imporGagal: "फ़ाइल पढ़ी नहीं जा सकी। सुनिश्चित करें कि यह एक मान्य बैकअप फ़ाइल है।",
+    semuaDataDihapus: "सभी डेटा हटा दिया गया।",
+  }},
+  bn: { nama: "বাংলা", kode: "bn-BD", arah: "ltr", teks: {
+    judulApp: "আর্থিক নোট", labelNamaLaporan: "রিপোর্টের নাম", labelPelapor: "রিপোর্টকারী",
+    saldoSaatIni: "💼 বর্তমান ব্যালেন্স", kotakPemasukan: "↑ আয়", kotakPengeluaran: "↓ ব্যয়",
+    ringkasanBulananJudul: "মাসিক সারাংশ", ringkasanKosong: "এখনো দেখানোর মতো মাসিক তথ্য নেই।",
+    masuk: "আয়", keluar: "ব্যয়", mengeditTransaksi: "লেনদেন সম্পাদনা হচ্ছে", batal: "বাতিল",
+    pemasukan: "আয়", pengeluaran: "ব্যয়", labelJumlah: "পরিমাণ (Rp)",
+    labelKeterangan: "নোট (ঐচ্ছিক)", simpanBtn: "+ লেনদেন সংরক্ষণ করুন", updateBtn: "✎ লেনদেন আপডেট করুন",
+    rincianTransaksiJudul: "লেনদেনের বিবরণ", semuaBulan: "সব মাস",
+    transaksiKosongAwal: "এখনো কোনো লেনদেন নেই। উপরে প্রথমটি যোগ করুন।",
+    transaksiKosongBulan: "এই মাসে কোনো লেনদেন নেই।", exportBtn: "রিপোর্ট এক্সপোর্ট / প্রিন্ট করুন (PDF)",
+    exportCatatan: 'আপনার ফোনের প্রিন্ট ডায়ালগ খুলবে — "PDF হিসেবে সংরক্ষণ করুন" নির্বাচন করুন।',
+    pengaturanDataJudul: "ডেটা সেটিংস",
+    pengaturanDataDesc: "সব ডেটা এই ডিভাইসেই থাকে (অফলাইন); কোনো সার্ভারে পাঠানো হয় না।",
+    backupBtn: "ডেটা ব্যাকআপ করুন", imporBtn: "ডেটা আমদানি করুন", hapusSemuaBtn: "⚠ সব ডেটা মুছুন",
+    hapusSemuaKonfirmasi: "⚠ নিশ্চিত করতে আবার চাপুন",
+    offlineStatus: "📴 আপনি অফলাইনে আছেন — আপনার ডেটা এই ডিভাইসে নিরাপদ আছে।", bahasaLabel: "ভাষা",
+    jumlahHarusDiisi: "পরিমাণ ০ এর চেয়ে বড় সংখ্যা হতে হবে।",
+    defaultKetPemasukan: "আয়", defaultKetPengeluaran: "ব্যয়",
+    transaksiDiperbarui: "লেনদেন আপডেট হয়েছে।", transaksiTersimpan: "লেনদেন সংরক্ষিত হয়েছে।",
+    hapusTransaksiKonfirmasi: "এই লেনদেনটি মুছবেন?", backupBerhasil: "ব্যাকআপ ডাউনলোড হয়েছে।",
+    imporKonfirmasi: (n) => `এই ফাইলে ${n}টি লেনদেন আছে।\nআমদানি করলে বর্তমান সব ডেটা প্রতিস্থাপিত হবে। চালিয়ে যাবেন?`,
+    imporBerhasil: "ডেটা সফলভাবে আমদানি হয়েছে।", imporGagal: "ফাইলটি পড়া যায়নি। এটি একটি বৈধ ব্যাকআপ ফাইল কিনা নিশ্চিত করুন।",
+    semuaDataDihapus: "সব ডেটা মুছে ফেলা হয়েছে।",
+  }},
+  zh: { nama: "中文", kode: "zh-CN", arah: "ltr", teks: {
+    judulApp: "记账本", labelNamaLaporan: "报告名称", labelPelapor: "填报人",
+    saldoSaatIni: "💼 当前余额", kotakPemasukan: "↑ 收入", kotakPengeluaran: "↓ 支出",
+    ringkasanBulananJudul: "月度汇总", ringkasanKosong: "暂无月度数据可显示。",
+    masuk: "收入", keluar: "支出", mengeditTransaksi: "正在编辑交易", batal: "取消",
+    pemasukan: "收入", pengeluaran: "支出", labelJumlah: "金额 (Rp)",
+    labelKeterangan: "备注（可选）", simpanBtn: "+ 保存交易", updateBtn: "✎ 更新交易",
+    rincianTransaksiJudul: "交易明细", semuaBulan: "所有月份",
+    transaksiKosongAwal: "还没有交易记录，请在上方添加第一条。",
+    transaksiKosongBulan: "本月没有交易记录。", exportBtn: "导出 / 打印报告 (PDF)",
+    exportCatatan: '将打开手机的打印对话框——请选择"存储为 PDF"。',
+    pengaturanDataJudul: "数据设置",
+    pengaturanDataDesc: "所有数据都保存在此设备上（离线），不会发送到任何服务器。",
+    backupBtn: "备份数据", imporBtn: "导入数据", hapusSemuaBtn: "⚠ 删除所有数据",
+    hapusSemuaKonfirmasi: "⚠ 再次点击以确认",
+    offlineStatus: "📴 您已离线——数据仍安全保存在此设备上。", bahasaLabel: "语言",
+    jumlahHarusDiisi: "金额必须是大于 0 的数字。",
+    defaultKetPemasukan: "收入", defaultKetPengeluaran: "支出",
+    transaksiDiperbarui: "交易已更新。", transaksiTersimpan: "交易已保存。",
+    hapusTransaksiKonfirmasi: "删除此交易？", backupBerhasil: "备份已下载。",
+    imporKonfirmasi: (n) => `此文件包含 ${n} 条交易记录。\n导入将替换所有当前数据。是否继续？`,
+    imporBerhasil: "数据导入成功。", imporGagal: "无法读取文件，请确认这是有效的备份文件。",
+    semuaDataDihapus: "所有数据已删除。",
+  }},
+  ja: { nama: "日本語", kode: "ja-JP", arah: "ltr", teks: {
+    judulApp: "家計簿", labelNamaLaporan: "レポート名", labelPelapor: "作成者",
+    saldoSaatIni: "💼 現在の残高", kotakPemasukan: "↑ 収入", kotakPengeluaran: "↓ 支出",
+    ringkasanBulananJudul: "月次サマリー", ringkasanKosong: "まだ表示できる月次データがありません。",
+    masuk: "収入", keluar: "支出", mengeditTransaksi: "取引を編集中", batal: "キャンセル",
+    pemasukan: "収入", pengeluaran: "支出", labelJumlah: "金額 (Rp)",
+    labelKeterangan: "メモ（任意）", simpanBtn: "+ 取引を保存", updateBtn: "✎ 取引を更新",
+    rincianTransaksiJudul: "取引明細", semuaBulan: "すべての月",
+    transaksiKosongAwal: "まだ取引がありません。上で最初の取引を追加してください。",
+    transaksiKosongBulan: "今月の取引はありません。", exportBtn: "レポートを書き出し／印刷 (PDF)",
+    exportCatatan: 'スマホの印刷ダイアログが開きます — 「PDFとして保存」を選んでください。',
+    pengaturanDataJudul: "データ設定",
+    pengaturanDataDesc: "すべてのデータはこの端末内に保存され（オフライン）、サーバーには送信されません。",
+    backupBtn: "データをバックアップ", imporBtn: "データをインポート", hapusSemuaBtn: "⚠ すべてのデータを削除",
+    hapusSemuaKonfirmasi: "⚠ 確認のためもう一度タップしてください",
+    offlineStatus: "📴 オフラインです — データはこの端末に安全に保存されています。", bahasaLabel: "言語",
+    jumlahHarusDiisi: "金額は0より大きい数値で入力してください。",
+    defaultKetPemasukan: "収入", defaultKetPengeluaran: "支出",
+    transaksiDiperbarui: "取引を更新しました。", transaksiTersimpan: "取引を保存しました。",
+    hapusTransaksiKonfirmasi: "この取引を削除しますか？", backupBerhasil: "バックアップをダウンロードしました。",
+    imporKonfirmasi: (n) => `このファイルには${n}件の取引が含まれています。\nインポートすると現在のデータはすべて置き換えられます。続けますか？`,
+    imporBerhasil: "データを正常にインポートしました。", imporGagal: "ファイルを読み込めませんでした。正しいバックアップファイルか確認してください。",
+    semuaDataDihapus: "すべてのデータを削除しました。",
+  }},
+  ko: { nama: "한국어", kode: "ko-KR", arah: "ltr", teks: {
+    judulApp: "가계부", labelNamaLaporan: "보고서 이름", labelPelapor: "작성자",
+    saldoSaatIni: "💼 현재 잔액", kotakPemasukan: "↑ 수입", kotakPengeluaran: "↓ 지출",
+    ringkasanBulananJudul: "월별 요약", ringkasanKosong: "표시할 월별 데이터가 아직 없습니다.",
+    masuk: "수입", keluar: "지출", mengeditTransaksi: "거래 수정 중", batal: "취소",
+    pemasukan: "수입", pengeluaran: "지출", labelJumlah: "금액 (Rp)",
+    labelKeterangan: "메모 (선택)", simpanBtn: "+ 거래 저장", updateBtn: "✎ 거래 업데이트",
+    rincianTransaksiJudul: "거래 내역", semuaBulan: "전체 월",
+    transaksiKosongAwal: "아직 거래 내역이 없습니다. 위에서 첫 거래를 추가하세요.",
+    transaksiKosongBulan: "이번 달 거래 내역이 없습니다.", exportBtn: "보고서 내보내기 / 인쇄 (PDF)",
+    exportCatatan: '휴대폰 인쇄 대화상자가 열립니다 — "PDF로 저장"을 선택하세요.',
+    pengaturanDataJudul: "데이터 설정",
+    pengaturanDataDesc: "모든 데이터는 이 기기에 저장되며(오프라인), 서버로 전송되지 않습니다.",
+    backupBtn: "데이터 백업", imporBtn: "데이터 가져오기", hapusSemuaBtn: "⚠ 모든 데이터 삭제",
+    hapusSemuaKonfirmasi: "⚠ 확인하려면 다시 탭하세요",
+    offlineStatus: "📴 오프라인 상태입니다 — 데이터는 이 기기에 안전하게 보관됩니다.", bahasaLabel: "언어",
+    jumlahHarusDiisi: "금액은 0보다 큰 숫자여야 합니다.",
+    defaultKetPemasukan: "수입", defaultKetPengeluaran: "지출",
+    transaksiDiperbarui: "거래가 업데이트되었습니다.", transaksiTersimpan: "거래가 저장되었습니다.",
+    hapusTransaksiKonfirmasi: "이 거래를 삭제하시겠습니까?", backupBerhasil: "백업이 다운로드되었습니다.",
+    imporKonfirmasi: (n) => `이 파일에는 ${n}건의 거래가 있습니다.\n가져오면 현재 모든 데이터가 대체됩니다. 계속하시겠습니까?`,
+    imporBerhasil: "데이터를 성공적으로 가져왔습니다.", imporGagal: "파일을 읽을 수 없습니다. 올바른 백업 파일인지 확인하세요.",
+    semuaDataDihapus: "모든 데이터가 삭제되었습니다.",
+  }},
+  vi: { nama: "Tiếng Việt", kode: "vi-VN", arah: "ltr", teks: {
+    judulApp: "Sổ Tài Chính", labelNamaLaporan: "Tên Báo Cáo", labelPelapor: "Người Báo Cáo",
+    saldoSaatIni: "💼 Số dư hiện tại", kotakPemasukan: "↑ Thu nhập", kotakPengeluaran: "↓ Chi tiêu",
+    ringkasanBulananJudul: "Tổng Kết Hàng Tháng", ringkasanKosong: "Chưa có dữ liệu hàng tháng để hiển thị.",
+    masuk: "Thu", keluar: "Chi", mengeditTransaksi: "Đang chỉnh sửa giao dịch", batal: "Hủy",
+    pemasukan: "Thu nhập", pengeluaran: "Chi tiêu", labelJumlah: "Số tiền (Rp)",
+    labelKeterangan: "Ghi chú (tùy chọn)", simpanBtn: "+ Lưu Giao Dịch", updateBtn: "✎ Cập Nhật Giao Dịch",
+    rincianTransaksiJudul: "Chi Tiết Giao Dịch", semuaBulan: "Tất cả các tháng",
+    transaksiKosongAwal: "Chưa có giao dịch nào. Thêm giao dịch đầu tiên ở trên.",
+    transaksiKosongBulan: "Không có giao dịch nào trong tháng này.", exportBtn: "Xuất / In Báo Cáo (PDF)",
+    exportCatatan: 'Hộp thoại in của điện thoại sẽ mở — chọn "Lưu dưới dạng PDF".',
+    pengaturanDataJudul: "Cài Đặt Dữ Liệu",
+    pengaturanDataDesc: "Mọi dữ liệu được lưu trên thiết bị này (ngoại tuyến); không gửi lên máy chủ nào.",
+    backupBtn: "Sao Lưu Dữ Liệu", imporBtn: "Nhập Dữ Liệu", hapusSemuaBtn: "⚠ Xóa Tất Cả Dữ Liệu",
+    hapusSemuaKonfirmasi: "⚠ Chạm lần nữa để xác nhận",
+    offlineStatus: "📴 Bạn đang ngoại tuyến — dữ liệu vẫn an toàn trên thiết bị này.", bahasaLabel: "Ngôn ngữ",
+    jumlahHarusDiisi: "Số tiền phải là số lớn hơn 0.",
+    defaultKetPemasukan: "Thu nhập", defaultKetPengeluaran: "Chi tiêu",
+    transaksiDiperbarui: "Đã cập nhật giao dịch.", transaksiTersimpan: "Đã lưu giao dịch.",
+    hapusTransaksiKonfirmasi: "Xóa giao dịch này?", backupBerhasil: "Đã tải xuống bản sao lưu.",
+    imporKonfirmasi: (n) => `Tệp này chứa ${n} giao dịch.\nNhập sẽ THAY THẾ toàn bộ dữ liệu hiện tại. Tiếp tục?`,
+    imporBerhasil: "Nhập dữ liệu thành công.", imporGagal: "Không thể đọc tệp. Hãy chắc chắn đây là tệp sao lưu hợp lệ.",
+    semuaDataDihapus: "Đã xóa toàn bộ dữ liệu.",
+  }},
+  th: { nama: "ไทย", kode: "th-TH", arah: "ltr", teks: {
+    judulApp: "บันทึกการเงิน", labelNamaLaporan: "ชื่อรายงาน", labelPelapor: "ผู้รายงาน",
+    saldoSaatIni: "💼 ยอดคงเหลือปัจจุบัน", kotakPemasukan: "↑ รายรับ", kotakPengeluaran: "↓ รายจ่าย",
+    ringkasanBulananJudul: "สรุปรายเดือน", ringkasanKosong: "ยังไม่มีข้อมูลรายเดือนให้แสดง",
+    masuk: "รับ", keluar: "จ่าย", mengeditTransaksi: "กำลังแก้ไขรายการ", batal: "ยกเลิก",
+    pemasukan: "รายรับ", pengeluaran: "รายจ่าย", labelJumlah: "จำนวนเงิน (Rp)",
+    labelKeterangan: "หมายเหตุ (ไม่บังคับ)", simpanBtn: "+ บันทึกรายการ", updateBtn: "✎ อัปเดตรายการ",
+    rincianTransaksiJudul: "รายละเอียดรายการ", semuaBulan: "ทุกเดือน",
+    transaksiKosongAwal: "ยังไม่มีรายการ เพิ่มรายการแรกของคุณด้านบน",
+    transaksiKosongBulan: "ไม่มีรายการในเดือนนี้", exportBtn: "ส่งออก / พิมพ์รายงาน (PDF)",
+    exportCatatan: 'หน้าต่างพิมพ์ของโทรศัพท์จะเปิดขึ้น — เลือก "บันทึกเป็น PDF"',
+    pengaturanDataJudul: "การตั้งค่าข้อมูล",
+    pengaturanDataDesc: "ข้อมูลทั้งหมดเก็บไว้ในอุปกรณ์นี้ (ออฟไลน์) ไม่ส่งไปยังเซิร์ฟเวอร์ใดๆ",
+    backupBtn: "สำรองข้อมูล", imporBtn: "นำเข้าข้อมูล", hapusSemuaBtn: "⚠ ลบข้อมูลทั้งหมด",
+    hapusSemuaKonfirmasi: "⚠ แตะอีกครั้งเพื่อยืนยัน",
+    offlineStatus: "📴 คุณออฟไลน์อยู่ — ข้อมูลของคุณยังปลอดภัยอยู่ในอุปกรณ์นี้", bahasaLabel: "ภาษา",
+    jumlahHarusDiisi: "จำนวนเงินต้องเป็นตัวเลขมากกว่า 0",
+    defaultKetPemasukan: "รายรับ", defaultKetPengeluaran: "รายจ่าย",
+    transaksiDiperbarui: "อัปเดตรายการแล้ว", transaksiTersimpan: "บันทึกรายการแล้ว",
+    hapusTransaksiKonfirmasi: "ลบรายการนี้หรือไม่?", backupBerhasil: "ดาวน์โหลดข้อมูลสำรองแล้ว",
+    imporKonfirmasi: (n) => `ไฟล์นี้มี ${n} รายการ\nการนำเข้าจะแทนที่ข้อมูลปัจจุบันทั้งหมด ดำเนินการต่อหรือไม่?`,
+    imporBerhasil: "นำเข้าข้อมูลสำเร็จ", imporGagal: "ไม่สามารถอ่านไฟล์ได้ โปรดตรวจสอบว่าเป็นไฟล์สำรองที่ถูกต้อง",
+    semuaDataDihapus: "ลบข้อมูลทั้งหมดแล้ว",
+  }},
+  ms: { nama: "Bahasa Melayu", kode: "ms-MY", arah: "ltr", teks: {
+    judulApp: "Catatan Kewangan", labelNamaLaporan: "Nama Laporan", labelPelapor: "Dilaporkan oleh",
+    saldoSaatIni: "💼 Baki semasa", kotakPemasukan: "↑ Pendapatan", kotakPengeluaran: "↓ Perbelanjaan",
+    ringkasanBulananJudul: "Ringkasan Bulanan", ringkasanKosong: "Belum ada data bulanan untuk dipaparkan.",
+    masuk: "Masuk", keluar: "Keluar", mengeditTransaksi: "Sedang mengedit transaksi", batal: "Batal",
+    pemasukan: "Pendapatan", pengeluaran: "Perbelanjaan", labelJumlah: "Jumlah (Rp)",
+    labelKeterangan: "Catatan (pilihan)", simpanBtn: "+ Simpan Transaksi", updateBtn: "✎ Kemas Kini Transaksi",
+    rincianTransaksiJudul: "Butiran Transaksi", semuaBulan: "Semua bulan",
+    transaksiKosongAwal: "Belum ada transaksi. Tambah yang pertama di atas.",
+    transaksiKosongBulan: "Tiada transaksi bulan ini.", exportBtn: "Eksport / Cetak Laporan (PDF)",
+    exportCatatan: 'Ini akan membuka dialog cetak telefon anda — pilih "Simpan sebagai PDF".',
+    pengaturanDataJudul: "Tetapan Data",
+    pengaturanDataDesc: "Semua data kekal pada peranti ini (luar talian); tiada apa dihantar ke pelayan.",
+    backupBtn: "Sandarkan Data", imporBtn: "Import Data", hapusSemuaBtn: "⚠ Padam Semua Data",
+    hapusSemuaKonfirmasi: "⚠ Ketik sekali lagi untuk mengesahkan",
+    offlineStatus: "📴 Anda luar talian — data anda masih selamat pada peranti ini.", bahasaLabel: "Bahasa",
+    jumlahHarusDiisi: "Jumlah mesti nombor lebih besar daripada 0.",
+    defaultKetPemasukan: "Pendapatan", defaultKetPengeluaran: "Perbelanjaan",
+    transaksiDiperbarui: "Transaksi dikemas kini.", transaksiTersimpan: "Transaksi disimpan.",
+    hapusTransaksiKonfirmasi: "Padam transaksi ini?", backupBerhasil: "Sandaran dimuat turun.",
+    imporKonfirmasi: (n) => `Fail ini mengandungi ${n} transaksi.\nMengimport akan MENGGANTIKAN semua data semasa. Teruskan?`,
+    imporBerhasil: "Data berjaya diimport.", imporGagal: "Tidak dapat membaca fail. Pastikan ini fail sandaran yang sah.",
+    semuaDataDihapus: "Semua data telah dipadam.",
+  }},
+  sw: { nama: "Kiswahili", kode: "sw-KE", arah: "ltr", teks: {
+    judulApp: "Kumbukumbu za Fedha", labelNamaLaporan: "Jina la Ripoti", labelPelapor: "Aliyeripoti",
+    saldoSaatIni: "💼 Salio la sasa", kotakPemasukan: "↑ Mapato", kotakPengeluaran: "↓ Matumizi",
+    ringkasanBulananJudul: "Muhtasari wa Kila Mwezi", ringkasanKosong: "Bado hakuna data ya kila mwezi ya kuonyesha.",
+    masuk: "Ingia", keluar: "Toka", mengeditTransaksi: "Inahariri muamala", batal: "Ghairi",
+    pemasukan: "Mapato", pengeluaran: "Matumizi", labelJumlah: "Kiasi (Rp)",
+    labelKeterangan: "Maelezo (hiari)", simpanBtn: "+ Hifadhi Muamala", updateBtn: "✎ Sasisha Muamala",
+    rincianTransaksiJudul: "Maelezo ya Miamala", semuaBulan: "Miezi yote",
+    transaksiKosongAwal: "Bado hakuna miamala. Ongeza ya kwanza hapo juu.",
+    transaksiKosongBulan: "Hakuna miamala mwezi huu.", exportBtn: "Hamisha / Chapisha Ripoti (PDF)",
+    exportCatatan: 'Hii itafungua kisanduku cha kuchapisha cha simu yako — chagua "Hifadhi kama PDF".',
+    pengaturanDataJudul: "Mipangilio ya Data",
+    pengaturanDataDesc: "Data yote inabaki kwenye kifaa hiki (bila mtandao); hakuna kinachotumwa kwa seva yoyote.",
+    backupBtn: "Hifadhi Nakala", imporBtn: "Leta Data", hapusSemuaBtn: "⚠ Futa Data Yote",
+    hapusSemuaKonfirmasi: "⚠ Gusa tena kuthibitisha",
+    offlineStatus: "📴 Huna mtandao — data yako bado iko salama kwenye kifaa hiki.", bahasaLabel: "Lugha",
+    jumlahHarusDiisi: "Kiasi lazima kiwe nambari kubwa kuliko 0.",
+    defaultKetPemasukan: "Mapato", defaultKetPengeluaran: "Matumizi",
+    transaksiDiperbarui: "Muamala umesasishwa.", transaksiTersimpan: "Muamala umehifadhiwa.",
+    hapusTransaksiKonfirmasi: "Futa muamala huu?", backupBerhasil: "Nakala imepakuliwa.",
+    imporKonfirmasi: (n) => `Faili hii ina miamala ${n}.\nKuleta kutabadilisha data yote ya sasa. Endelea?`,
+    imporBerhasil: "Data imeletwa kwa mafanikio.", imporGagal: "Imeshindwa kusoma faili. Hakikisha ni faili sahihi ya nakala.",
+    semuaDataDihapus: "Data yote imefutwa.",
+  }},
+};
+
+let bahasaAktif = localStorage.getItem(KUNCI_BAHASA) || "id";
+if (!BAHASA[bahasaAktif]) bahasaAktif = "id";
+
+function t(kunci, ...args) {
+  const kamus = (BAHASA[bahasaAktif] && BAHASA[bahasaAktif].teks) || BAHASA.id.teks;
+  const nilai = kamus[kunci] !== undefined ? kamus[kunci] : BAHASA.id.teks[kunci];
+  return typeof nilai === "function" ? nilai(...args) : nilai;
+}
+
+function isiPilihanBahasa() {
+  const sel = document.getElementById("pilihBahasa");
+  sel.innerHTML = Object.keys(BAHASA).map((kode) => `<option value="${kode}">${BAHASA[kode].nama}</option>`).join("");
+  sel.value = bahasaAktif;
+}
+
+function terapkanBahasa() {
+  document.documentElement.lang = bahasaAktif;
+  document.documentElement.dir = BAHASA[bahasaAktif].arah;
+
+  document.getElementById("txJudulApp").textContent = t("judulApp");
+  document.title = t("judulApp");
+  document.getElementById("txLabelNamaLaporan").textContent = t("labelNamaLaporan");
+  document.getElementById("txLabelPelapor").textContent = t("labelPelapor");
+  document.getElementById("txSaldoSaatIni").textContent = t("saldoSaatIni");
+  document.getElementById("txKotakPemasukan").textContent = t("kotakPemasukan");
+  document.getElementById("txKotakPengeluaran").textContent = t("kotakPengeluaran");
+  document.getElementById("txRingkasanBulananJudul").textContent = t("ringkasanBulananJudul");
+  document.getElementById("txMengeditTransaksi").textContent = t("mengeditTransaksi");
+  document.getElementById("txBatal").textContent = t("batal");
+  document.getElementById("btnPemasukan").textContent = t("pemasukan");
+  document.getElementById("btnPengeluaran").textContent = t("pengeluaran");
+  document.getElementById("txLabelJumlah").textContent = t("labelJumlah");
+  document.getElementById("txLabelKeterangan").textContent = t("labelKeterangan");
+  document.getElementById("txRincianTransaksiJudul").textContent = t("rincianTransaksiJudul");
+  document.getElementById("txExportBtn").textContent = t("exportBtn");
+  document.getElementById("txExportCatatan").textContent = t("exportCatatan");
+  document.getElementById("txPengaturanDataJudul").textContent = t("pengaturanDataJudul");
+  document.getElementById("txPengaturanDataDesc").textContent = t("pengaturanDataDesc");
+  document.getElementById("txBackupBtn").textContent = t("backupBtn");
+  document.getElementById("txImporBtn").textContent = t("imporBtn");
+  if (!konfirmasiHapus) document.getElementById("btnHapusSemua").textContent = "⚠ " + t("hapusSemuaBtn").replace(/^⚠\s*/, "");
+  document.getElementById("namaLaporan").placeholder = t("labelNamaLaporan");
+  document.getElementById("pelapor").placeholder = t("labelPelapor");
+  btnSimpan.textContent = editId ? t("updateBtn") : t("simpanBtn");
+
+  tampilkanTanggalHariIni();
+  perbaruiStatusOffline();
+  render();
+}
+
+document.getElementById("pilihBahasa").addEventListener("change", (e) => {
+  bahasaAktif = e.target.value;
+  localStorage.setItem(KUNCI_BAHASA, bahasaAktif);
+  terapkanBahasa();
+});
+
 // ====== PENYIMPANAN LOKAL (tidak ke server manapun) ======
 const KUNCI_TRANSAKSI = "ck_transaksi";
 const KUNCI_INFO = "ck_info_laporan";
@@ -207,33 +751,33 @@ let jenisAktif = "pemasukan";
 let filterBulan = "semua";
 
 // ====== UTIL ======
-function formatRupiah(angka) { return "Rp" + Math.round(angka).toLocaleString("id-ID"); }
+function kodeLocale() { return (BAHASA[bahasaAktif] && BAHASA[bahasaAktif].kode) || "id-ID"; }
+function formatRupiah(angka) { return "Rp" + Math.round(angka).toLocaleString(kodeLocale()); }
 function formatTanggal(iso) {
-  return new Date(iso).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
+  return new Date(iso).toLocaleDateString(kodeLocale(), { day: "numeric", month: "long", year: "numeric" });
 }
 function kunciBulan(iso) {
   const d = new Date(iso);
   return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0");
 }
 function labelBulan(iso) {
-  return new Date(iso).toLocaleDateString("id-ID", { month: "long", year: "numeric" });
+  return new Date(iso).toLocaleDateString(kodeLocale(), { month: "long", year: "numeric" });
 }
 
 // ====== TANGGAL HARI INI ======
 function tampilkanTanggalHariIni() {
   document.getElementById("tanggalHariIni").textContent =
-    new Date().toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+    new Date().toLocaleDateString(kodeLocale(), { weekday: "long", day: "numeric", month: "long", year: "numeric" });
 }
-tampilkanTanggalHariIni();
-setInterval(tampilkanTanggalHariIni, 60000);
 
 // ====== STATUS OFFLINE ======
 function perbaruiStatusOffline() {
-  document.getElementById("statusOffline").style.display = navigator.onLine ? "none" : "block";
+  const el = document.getElementById("statusOffline");
+  el.textContent = t("offlineStatus");
+  el.style.display = navigator.onLine ? "none" : "block";
 }
 window.addEventListener("online", perbaruiStatusOffline);
 window.addEventListener("offline", perbaruiStatusOffline);
-perbaruiStatusOffline();
 
 // ====== INFO LAPORAN ======
 const info = ambilInfo();
@@ -273,7 +817,7 @@ function resetForm() {
   inputKeterangan.value = "";
   editId = null;
   labelEdit.style.display = "none";
-  btnSimpan.textContent = "+ Simpan Transaksi";
+  btnSimpan.textContent = t("simpanBtn");
 }
 
 document.getElementById("batalEdit").addEventListener("click", resetForm);
@@ -282,16 +826,16 @@ form.addEventListener("submit", function (e) {
   e.preventDefault();
   const nilai = parseInt(inputJumlah.value.replace(/[^0-9]/g, ""), 10);
   if (!nilai || nilai <= 0) {
-    tampilkanPesan(pesanForm, "Jumlah harus diisi dengan angka lebih dari 0.");
+    tampilkanPesan(pesanForm, t("jumlahHarusDiisi"));
     return;
   }
-  const ket = inputKeterangan.value.trim() || (jenisAktif === "pemasukan" ? "Pemasukan" : "Pengeluaran");
+  const ket = inputKeterangan.value.trim() || (jenisAktif === "pemasukan" ? t("defaultKetPemasukan") : t("defaultKetPengeluaran"));
 
   if (editId) {
-    transaksi = transaksi.map((t) =>
-      t.id === editId ? { ...t, jenis: jenisAktif, jumlah: nilai, keterangan: ket } : t
+    transaksi = transaksi.map((x) =>
+      x.id === editId ? { ...x, jenis: jenisAktif, jumlah: nilai, keterangan: ket } : x
     );
-    tampilkanPesan(pesanForm, "Transaksi berhasil diperbarui.");
+    tampilkanPesan(pesanForm, t("transaksiDiperbarui"));
   } else {
     transaksi.unshift({
       id: Date.now().toString(),
@@ -300,7 +844,7 @@ form.addEventListener("submit", function (e) {
       keterangan: ket,
       tanggal: new Date().toISOString(),
     });
-    tampilkanPesan(pesanForm, "Transaksi berhasil disimpan.");
+    tampilkanPesan(pesanForm, t("transaksiTersimpan"));
   }
   simpanTransaksiKeStorage(transaksi);
   resetForm();
@@ -313,20 +857,20 @@ function tampilkanPesan(el, teks) {
 }
 
 function mulaiEdit(id) {
-  const t = transaksi.find((x) => x.id === id);
-  if (!t) return;
+  const trx = transaksi.find((x) => x.id === id);
+  if (!trx) return;
   editId = id;
-  setJenis(t.jenis);
-  inputJumlah.value = t.jumlah;
-  inputKeterangan.value = t.keterangan;
+  setJenis(trx.jenis);
+  inputJumlah.value = trx.jumlah;
+  inputKeterangan.value = trx.keterangan;
   labelEdit.style.display = "flex";
-  btnSimpan.textContent = "✎ Update Transaksi";
+  btnSimpan.textContent = t("updateBtn");
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 function hapusTransaksi(id) {
-  if (!confirm("Hapus transaksi ini?")) return;
-  transaksi = transaksi.filter((t) => t.id !== id);
+  if (!confirm(t("hapusTransaksiKonfirmasi"))) return;
+  transaksi = transaksi.filter((x) => x.id !== id);
   simpanTransaksiKeStorage(transaksi);
   if (editId === id) resetForm();
   render();
@@ -359,7 +903,7 @@ function render() {
 
   const elRingkasan = document.getElementById("ringkasanBulanan");
   elRingkasan.innerHTML = daftarBulan.length === 0
-    ? '<p class="kosong">Belum ada data untuk ditampilkan per bulan.</p>'
+    ? `<p class="kosong">${t("ringkasanKosong")}</p>`
     : daftarBulan.map((b) => {
         const selisih = b.pemasukan - b.pengeluaran;
         return `<div style="padding:10px 0;border-bottom:1px solid #F0F1EF;">
@@ -370,7 +914,7 @@ function render() {
             </span>
           </div>
           <div style="display:flex;gap:12px;font-size:12px;color:#6B7280;">
-            <span>Masuk: ${formatRupiah(b.pemasukan)}</span><span>Keluar: ${formatRupiah(b.pengeluaran)}</span>
+            <span>${t("masuk")}: ${formatRupiah(b.pemasukan)}</span><span>${t("keluar")}: ${formatRupiah(b.pengeluaran)}</span>
           </div>
         </div>`;
       }).join("");
@@ -378,15 +922,15 @@ function render() {
   // Dropdown filter bulan
   const selFilter = document.getElementById("filterBulan");
   const nilaiTerpilih = filterBulan;
-  selFilter.innerHTML = '<option value="semua">Semua bulan</option>' +
+  selFilter.innerHTML = `<option value="semua">${t("semuaBulan")}</option>` +
     daftarBulan.map((b) => `<option value="${b.kunci}">${b.label}</option>`).join("");
   selFilter.value = nilaiTerpilih;
 
   // Daftar transaksi (sesuai filter)
-  const tampil = filterBulan === "semua" ? transaksi : transaksi.filter((t) => kunciBulan(t.tanggal) === filterBulan);
+  const tampil = filterBulan === "semua" ? transaksi : transaksi.filter((tr) => kunciBulan(tr.tanggal) === filterBulan);
   const elDaftar = document.getElementById("daftarTransaksi");
   if (tampil.length === 0) {
-    elDaftar.innerHTML = `<p class="kosong">${transaksi.length === 0 ? "Belum ada transaksi. Tambahkan transaksi pertama Anda di atas." : "Tidak ada transaksi pada bulan ini."}</p>`;
+    elDaftar.innerHTML = `<p class="kosong">${transaksi.length === 0 ? t("transaksiKosongAwal") : t("transaksiKosongBulan")}</p>`;
   } else {
     elDaftar.innerHTML = tampil.map((t) => `
       <div class="baris-transaksi">
@@ -432,7 +976,7 @@ document.getElementById("btnBackup").addEventListener("click", () => {
   a.download = `backup-catatan-keuangan-${new Date().toISOString().slice(0,10)}.json`;
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   URL.revokeObjectURL(url);
-  tampilkanPesan(pesanData, "Backup berhasil diunduh.");
+  tampilkanPesan(pesanData, t("backupBerhasil"));
 });
 
 document.getElementById("btnPilihImpor").addEventListener("click", () => {
@@ -447,16 +991,16 @@ document.getElementById("inputImpor").addEventListener("change", (e) => {
     try {
       const data = JSON.parse(ev.target.result);
       if (!Array.isArray(data.transaksi)) throw new Error("format salah");
-      if (!confirm(`File ini berisi ${data.transaksi.length} transaksi.\nMengimpor akan MENGGANTI semua data yang ada sekarang. Lanjutkan?`)) return;
+      if (!confirm(t("imporKonfirmasi", data.transaksi.length))) return;
       transaksi = data.transaksi;
       simpanTransaksiKeStorage(transaksi);
       simpanInfoKeStorage({ namaLaporan: data.namaLaporan || "", pelapor: data.pelapor || "" });
       document.getElementById("namaLaporan").value = data.namaLaporan || "";
       document.getElementById("pelapor").value = data.pelapor || "";
-      tampilkanPesan(pesanData, "Data berhasil diimpor.");
+      tampilkanPesan(pesanData, t("imporBerhasil"));
       render();
     } catch (err) {
-      tampilkanPesan(pesanData, "Gagal membaca file. Pastikan ini file backup yang benar.");
+      tampilkanPesan(pesanData, t("imporGagal"));
     }
   };
   reader.readAsText(file);
@@ -468,11 +1012,11 @@ document.getElementById("btnHapusSemua").addEventListener("click", function () {
   if (!konfirmasiHapus) {
     konfirmasiHapus = true;
     this.classList.add("siap");
-    this.textContent = "⚠ Tekan sekali lagi untuk memastikan";
+    this.textContent = t("hapusSemuaKonfirmasi");
     setTimeout(() => {
       konfirmasiHapus = false;
       this.classList.remove("siap");
-      this.textContent = "⚠ Hapus Semua Data";
+      this.textContent = "⚠ " + t("hapusSemuaBtn").replace(/^⚠\s*/, "");
     }, 4000);
     return;
   }
@@ -484,8 +1028,8 @@ document.getElementById("btnHapusSemua").addEventListener("click", function () {
   resetForm();
   konfirmasiHapus = false;
   this.classList.remove("siap");
-  this.textContent = "⚠ Hapus Semua Data";
-  tampilkanPesan(pesanData, "Semua data berhasil dihapus.");
+  this.textContent = "⚠ " + t("hapusSemuaBtn").replace(/^⚠\s*/, "");
+  tampilkanPesan(pesanData, t("semuaDataDihapus"));
   render();
 });
 
@@ -497,7 +1041,8 @@ if ("serviceWorker" in navigator) {
 }
 
 // ====== MULAI ======
-render();
+isiPilihanBahasa();
+terapkanBahasa();
 </script>
 </body>
 </html>
