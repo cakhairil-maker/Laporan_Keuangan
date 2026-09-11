@@ -185,6 +185,7 @@
       <span id="txKurs1">1 USD =</span>
       <input type="text" inputmode="decimal" id="inputKurs" style="width:90px;padding:6px 8px;border:1px solid #E5E7EB;border-radius:8px;font-size:12px;" />
       <span id="txKursIDR">Rp</span>
+      <span id="statusKurs" style="cursor:default;"></span>
     </div>
     <button class="btn-bahaya" id="btnHapusSemua">⚠ Hapus Semua Data</button>
     <div class="pesan" id="pesanData"></div>
@@ -202,13 +203,14 @@ const BAHASA = {
     masuk: "Masuk", keluar: "Keluar", mengeditTransaksi: "Mengedit transaksi", batal: "Batal",
     pemasukan: "Pemasukan", pengeluaran: "Pengeluaran", labelJumlah: "Jumlah",
     kursLabel: "Kurs (perkiraan)",
+    kursOnline: "Kurs mengikuti nilai terkini (online)", kursManual: "Kurs disesuaikan manual", kursPerkiraan: "Kurs perkiraan (offline)",
     labelKeterangan: "Keterangan (opsional)", simpanBtn: "+ Simpan Transaksi", updateBtn: "✎ Update Transaksi",
     rincianTransaksiJudul: "Rincian Transaksi", semuaBulan: "Semua bulan",
     transaksiKosongAwal: "Belum ada transaksi. Tambahkan transaksi pertama Anda di atas.",
     transaksiKosongBulan: "Tidak ada transaksi pada bulan ini.", exportBtn: "Export / Cetak Laporan (PDF)",
     exportCatatan: 'Akan membuka dialog cetak HP Anda — pilih "Simpan sebagai PDF".',
     pengaturanDataJudul: "Pengaturan Data",
-    pengaturanDataDesc: "Semua data tersimpan langsung di HP ini (offline), tidak dikirim ke server mana pun.",
+    pengaturanDataDesc: "Data transaksi Anda tersimpan langsung di HP ini (offline), tidak pernah dikirim ke server mana pun. Saat ada internet, aplikasi hanya mengambil kurs mata uang terkini dari layanan publik — tanpa mengirim data pribadi apa pun.",
     backupBtn: "Backup Data", imporBtn: "Impor Data", hapusSemuaBtn: "⚠ Hapus Semua Data",
     hapusSemuaKonfirmasi: "⚠ Tekan sekali lagi untuk memastikan",
     offlineStatus: "📴 Sedang offline — data tetap aman tersimpan di HP ini.", bahasaLabel: "Bahasa",
@@ -227,13 +229,14 @@ const BAHASA = {
     masuk: "In", keluar: "Out", mengeditTransaksi: "Editing transaction", batal: "Cancel",
     pemasukan: "Income", pengeluaran: "Expense", labelJumlah: "Amount",
     kursLabel: "Exchange rate (estimate)",
+    kursOnline: "Rate follows the current live value (online)", kursManual: "Rate manually adjusted", kursPerkiraan: "Estimated rate (offline)",
     labelKeterangan: "Note (optional)", simpanBtn: "+ Save Transaction", updateBtn: "✎ Update Transaction",
     rincianTransaksiJudul: "Transaction Details", semuaBulan: "All months",
     transaksiKosongAwal: "No transactions yet. Add your first one above.",
     transaksiKosongBulan: "No transactions this month.", exportBtn: "Export / Print Report (PDF)",
     exportCatatan: 'This opens your phone\'s print dialog — choose "Save as PDF".',
     pengaturanDataJudul: "Data Settings",
-    pengaturanDataDesc: "All data stays on this device (offline); nothing is sent to any server.",
+    pengaturanDataDesc: "Your transaction data stays on this device (offline) and is never sent to any server. When online, the app only fetches current exchange rates from a public service — no personal data is ever sent.",
     backupBtn: "Back Up Data", imporBtn: "Import Data", hapusSemuaBtn: "⚠ Delete All Data",
     hapusSemuaKonfirmasi: "⚠ Tap once more to confirm",
     offlineStatus: "📴 You're offline — your data is still safe on this device.", bahasaLabel: "Language",
@@ -252,13 +255,14 @@ const BAHASA = {
     masuk: "Entrada", keluar: "Salida", mengeditTransaksi: "Editando transacción", batal: "Cancelar",
     pemasukan: "Ingreso", pengeluaran: "Gasto", labelJumlah: "Monto",
     kursLabel: "Tipo de cambio (estimado)",
+    kursOnline: "La tasa sigue el valor actual (en línea)", kursManual: "Tasa ajustada manualmente", kursPerkiraan: "Tasa estimada (sin conexión)",
     labelKeterangan: "Nota (opcional)", simpanBtn: "+ Guardar Transacción", updateBtn: "✎ Actualizar Transacción",
     rincianTransaksiJudul: "Detalle de Transacciones", semuaBulan: "Todos los meses",
     transaksiKosongAwal: "Aún no hay transacciones. Agrega la primera arriba.",
     transaksiKosongBulan: "No hay transacciones este mes.", exportBtn: "Exportar / Imprimir Informe (PDF)",
     exportCatatan: 'Se abrirá el diálogo de impresión — elige "Guardar como PDF".',
     pengaturanDataJudul: "Ajustes de Datos",
-    pengaturanDataDesc: "Todos los datos se guardan en este dispositivo (sin conexión); no se envían a ningún servidor.",
+    pengaturanDataDesc: "Tus datos de transacciones se guardan en este dispositivo (sin conexión) y nunca se envían a ningún servidor. Cuando hay conexión, la app solo consulta el tipo de cambio actual en un servicio público, sin enviar datos personales.",
     backupBtn: "Respaldar Datos", imporBtn: "Importar Datos", hapusSemuaBtn: "⚠ Eliminar Todos los Datos",
     hapusSemuaKonfirmasi: "⚠ Toca una vez más para confirmar",
     offlineStatus: "📴 Estás sin conexión — tus datos siguen seguros en este dispositivo.", bahasaLabel: "Idioma",
@@ -277,13 +281,14 @@ const BAHASA = {
     masuk: "Entrée", keluar: "Sortie", mengeditTransaksi: "Modification de la transaction", batal: "Annuler",
     pemasukan: "Revenu", pengeluaran: "Dépense", labelJumlah: "Montant",
     kursLabel: "Taux de change (estimation)",
+    kursOnline: "Le taux suit la valeur actuelle (en ligne)", kursManual: "Taux ajusté manuellement", kursPerkiraan: "Taux estimé (hors ligne)",
     labelKeterangan: "Note (facultatif)", simpanBtn: "+ Enregistrer la Transaction", updateBtn: "✎ Mettre à Jour",
     rincianTransaksiJudul: "Détail des Transactions", semuaBulan: "Tous les mois",
     transaksiKosongAwal: "Aucune transaction pour l'instant. Ajoutez-en une ci-dessus.",
     transaksiKosongBulan: "Aucune transaction ce mois-ci.", exportBtn: "Exporter / Imprimer le Rapport (PDF)",
     exportCatatan: 'La boîte de dialogue d\'impression s\'ouvrira — choisissez "Enregistrer en PDF".',
     pengaturanDataJudul: "Paramètres des Données",
-    pengaturanDataDesc: "Toutes les données restent sur cet appareil (hors ligne); rien n'est envoyé à un serveur.",
+    pengaturanDataDesc: "Vos données de transactions restent sur cet appareil (hors ligne) et ne sont jamais envoyées à un serveur. En ligne, l'application récupère seulement le taux de change actuel auprès d'un service public, sans envoyer aucune donnée personnelle.",
     backupBtn: "Sauvegarder les Données", imporBtn: "Importer des Données", hapusSemuaBtn: "⚠ Supprimer Toutes les Données",
     hapusSemuaKonfirmasi: "⚠ Appuyez encore une fois pour confirmer",
     offlineStatus: "📴 Vous êtes hors ligne — vos données restent en sécurité sur cet appareil.", bahasaLabel: "Langue",
@@ -302,13 +307,14 @@ const BAHASA = {
     masuk: "Ein", keluar: "Aus", mengeditTransaksi: "Transaktion wird bearbeitet", batal: "Abbrechen",
     pemasukan: "Einnahme", pengeluaran: "Ausgabe", labelJumlah: "Betrag",
     kursLabel: "Wechselkurs (geschätzt)",
+    kursOnline: "Kurs folgt dem aktuellen Live-Wert (online)", kursManual: "Kurs manuell angepasst", kursPerkiraan: "Geschätzter Kurs (offline)",
     labelKeterangan: "Notiz (optional)", simpanBtn: "+ Transaktion Speichern", updateBtn: "✎ Transaktion Aktualisieren",
     rincianTransaksiJudul: "Transaktionsdetails", semuaBulan: "Alle Monate",
     transaksiKosongAwal: "Noch keine Transaktionen. Fügen Sie oben Ihre erste hinzu.",
     transaksiKosongBulan: "Keine Transaktionen in diesem Monat.", exportBtn: "Bericht Exportieren / Drucken (PDF)",
     exportCatatan: 'Öffnet den Druckdialog Ihres Telefons — wählen Sie "Als PDF speichern".',
     pengaturanDataJudul: "Dateneinstellungen",
-    pengaturanDataDesc: "Alle Daten bleiben auf diesem Gerät (offline); nichts wird an einen Server gesendet.",
+    pengaturanDataDesc: "Ihre Transaktionsdaten bleiben auf diesem Gerät (offline) und werden nie an einen Server gesendet. Ist eine Internetverbindung vorhanden, ruft die App nur den aktuellen Wechselkurs von einem öffentlichen Dienst ab — es werden keine persönlichen Daten gesendet.",
     backupBtn: "Daten Sichern", imporBtn: "Daten Importieren", hapusSemuaBtn: "⚠ Alle Daten Löschen",
     hapusSemuaKonfirmasi: "⚠ Nochmals tippen zum Bestätigen",
     offlineStatus: "📴 Sie sind offline — Ihre Daten sind weiterhin sicher auf diesem Gerät.", bahasaLabel: "Sprache",
@@ -327,13 +333,14 @@ const BAHASA = {
     masuk: "Entrada", keluar: "Saída", mengeditTransaksi: "Editando transação", batal: "Cancelar",
     pemasukan: "Receita", pengeluaran: "Despesa", labelJumlah: "Valor",
     kursLabel: "Taxa de câmbio (estimativa)",
+    kursOnline: "A taxa segue o valor atual (online)", kursManual: "Taxa ajustada manualmente", kursPerkiraan: "Taxa estimada (offline)",
     labelKeterangan: "Nota (opcional)", simpanBtn: "+ Salvar Transação", updateBtn: "✎ Atualizar Transação",
     rincianTransaksiJudul: "Detalhes das Transações", semuaBulan: "Todos os meses",
     transaksiKosongAwal: "Ainda não há transações. Adicione a primeira acima.",
     transaksiKosongBulan: "Nenhuma transação neste mês.", exportBtn: "Exportar / Imprimir Relatório (PDF)",
     exportCatatan: 'Isso abre a caixa de diálogo de impressão — escolha "Salvar como PDF".',
     pengaturanDataJudul: "Configurações de Dados",
-    pengaturanDataDesc: "Todos os dados ficam neste dispositivo (offline); nada é enviado a nenhum servidor.",
+    pengaturanDataDesc: "Seus dados de transações ficam neste dispositivo (offline) e nunca são enviados a nenhum servidor. Quando há internet, o aplicativo apenas busca a taxa de câmbio atual em um serviço público, sem enviar nenhum dado pessoal.",
     backupBtn: "Fazer Backup", imporBtn: "Importar Dados", hapusSemuaBtn: "⚠ Excluir Todos os Dados",
     hapusSemuaKonfirmasi: "⚠ Toque mais uma vez para confirmar",
     offlineStatus: "📴 Você está offline — seus dados continuam seguros neste dispositivo.", bahasaLabel: "Idioma",
@@ -352,13 +359,14 @@ const BAHASA = {
     masuk: "Entrata", keluar: "Uscita", mengeditTransaksi: "Modifica transazione", batal: "Annulla",
     pemasukan: "Entrata", pengeluaran: "Uscita", labelJumlah: "Importo",
     kursLabel: "Tasso di cambio (stima)",
+    kursOnline: "Il tasso segue il valore attuale (online)", kursManual: "Tasso regolato manualmente", kursPerkiraan: "Tasso stimato (offline)",
     labelKeterangan: "Nota (opzionale)", simpanBtn: "+ Salva Transazione", updateBtn: "✎ Aggiorna Transazione",
     rincianTransaksiJudul: "Dettagli Transazioni", semuaBulan: "Tutti i mesi",
     transaksiKosongAwal: "Nessuna transazione ancora. Aggiungine una sopra.",
     transaksiKosongBulan: "Nessuna transazione questo mese.", exportBtn: "Esporta / Stampa Report (PDF)",
     exportCatatan: 'Si aprirà la finestra di stampa — scegli "Salva come PDF".',
     pengaturanDataJudul: "Impostazioni Dati",
-    pengaturanDataDesc: "Tutti i dati restano su questo dispositivo (offline); nulla viene inviato a un server.",
+    pengaturanDataDesc: "I tuoi dati di transazione restano su questo dispositivo (offline) e non vengono mai inviati a un server. Quando sei online, l'app recupera solo il tasso di cambio attuale da un servizio pubblico, senza inviare dati personali.",
     backupBtn: "Backup Dati", imporBtn: "Importa Dati", hapusSemuaBtn: "⚠ Elimina Tutti i Dati",
     hapusSemuaKonfirmasi: "⚠ Tocca di nuovo per confermare",
     offlineStatus: "📴 Sei offline — i tuoi dati restano al sicuro su questo dispositivo.", bahasaLabel: "Lingua",
@@ -377,13 +385,14 @@ const BAHASA = {
     masuk: "In", keluar: "Uit", mengeditTransaksi: "Transactie bewerken", batal: "Annuleren",
     pemasukan: "Inkomst", pengeluaran: "Uitgave", labelJumlah: "Bedrag",
     kursLabel: "Wisselkoers (schatting)",
+    kursOnline: "Koers volgt de actuele live waarde (online)", kursManual: "Koers handmatig aangepast", kursPerkiraan: "Geschatte koers (offline)",
     labelKeterangan: "Notitie (optioneel)", simpanBtn: "+ Transactie Opslaan", updateBtn: "✎ Transactie Bijwerken",
     rincianTransaksiJudul: "Transactiedetails", semuaBulan: "Alle maanden",
     transaksiKosongAwal: "Nog geen transacties. Voeg hierboven je eerste toe.",
     transaksiKosongBulan: "Geen transacties deze maand.", exportBtn: "Rapport Exporteren / Afdrukken (PDF)",
     exportCatatan: 'Dit opent het afdrukvenster — kies "Opslaan als PDF".',
     pengaturanDataJudul: "Gegevensinstellingen",
-    pengaturanDataDesc: "Alle gegevens blijven op dit apparaat (offline); niets wordt naar een server gestuurd.",
+    pengaturanDataDesc: "Je transactiegegevens blijven op dit apparaat (offline) en worden nooit naar een server gestuurd. Bij een internetverbinding haalt de app alleen de actuele wisselkoers op bij een openbare dienst — er worden geen persoonlijke gegevens verstuurd.",
     backupBtn: "Back-up Maken", imporBtn: "Gegevens Importeren", hapusSemuaBtn: "⚠ Alle Gegevens Verwijderen",
     hapusSemuaKonfirmasi: "⚠ Tik nogmaals om te bevestigen",
     offlineStatus: "📴 Je bent offline — je gegevens blijven veilig op dit apparaat.", bahasaLabel: "Taal",
@@ -402,13 +411,14 @@ const BAHASA = {
     masuk: "Доход", keluar: "Расход", mengeditTransaksi: "Редактирование операции", batal: "Отмена",
     pemasukan: "Доход", pengeluaran: "Расход", labelJumlah: "Сумма",
     kursLabel: "Курс обмена (примерно)",
+    kursOnline: "Курс следует текущему значению (онлайн)", kursManual: "Курс изменён вручную", kursPerkiraan: "Примерный курс (офлайн)",
     labelKeterangan: "Заметка (необязательно)", simpanBtn: "+ Сохранить Операцию", updateBtn: "✎ Обновить Операцию",
     rincianTransaksiJudul: "Детали Операций", semuaBulan: "Все месяцы",
     transaksiKosongAwal: "Пока нет операций. Добавьте первую выше.",
     transaksiKosongBulan: "В этом месяце операций нет.", exportBtn: "Экспорт / Печать Отчёта (PDF)",
     exportCatatan: 'Откроется диалог печати — выберите "Сохранить как PDF".',
     pengaturanDataJudul: "Настройки Данных",
-    pengaturanDataDesc: "Все данные хранятся на этом устройстве (офлайн); ничего не отправляется на сервер.",
+    pengaturanDataDesc: "Данные ваших операций хранятся на этом устройстве (офлайн) и никогда не отправляются на сервер. При наличии интернета приложение только получает текущий курс валют от публичного сервиса — никакие личные данные не передаются.",
     backupBtn: "Резервная Копия", imporBtn: "Импорт Данных", hapusSemuaBtn: "⚠ Удалить Все Данные",
     hapusSemuaKonfirmasi: "⚠ Нажмите ещё раз для подтверждения",
     offlineStatus: "📴 Вы офлайн — данные всё равно в безопасности на устройстве.", bahasaLabel: "Язык",
@@ -427,13 +437,14 @@ const BAHASA = {
     masuk: "Giren", keluar: "Çıkan", mengeditTransaksi: "İşlem düzenleniyor", batal: "İptal",
     pemasukan: "Gelir", pengeluaran: "Gider", labelJumlah: "Tutar",
     kursLabel: "Döviz kuru (tahmini)",
+    kursOnline: "Kur güncel canlı değeri takip ediyor (çevrimiçi)", kursManual: "Kur elle ayarlandı", kursPerkiraan: "Tahmini kur (çevrimdışı)",
     labelKeterangan: "Not (isteğe bağlı)", simpanBtn: "+ İşlemi Kaydet", updateBtn: "✎ İşlemi Güncelle",
     rincianTransaksiJudul: "İşlem Detayları", semuaBulan: "Tüm aylar",
     transaksiKosongAwal: "Henüz işlem yok. Yukarıdan ilkini ekleyin.",
     transaksiKosongBulan: "Bu ay işlem yok.", exportBtn: "Raporu Dışa Aktar / Yazdır (PDF)",
     exportCatatan: 'Telefonunuzun yazdırma penceresi açılır — "PDF olarak kaydet" seçin.',
     pengaturanDataJudul: "Veri Ayarları",
-    pengaturanDataDesc: "Tüm veriler bu cihazda kalır (çevrimdışı); hiçbir sunucuya gönderilmez.",
+    pengaturanDataDesc: "İşlem verileriniz bu cihazda kalır (çevrimdışı) ve hiçbir sunucuya gönderilmez. İnternet varken uygulama yalnızca güncel döviz kurunu genel bir hizmetten alır — hiçbir kişisel veri gönderilmez.",
     backupBtn: "Yedekle", imporBtn: "Veri İçe Aktar", hapusSemuaBtn: "⚠ Tüm Verileri Sil",
     hapusSemuaKonfirmasi: "⚠ Onaylamak için tekrar dokunun",
     offlineStatus: "📴 Çevrimdışısınız — verileriniz bu cihazda güvende kalmaya devam ediyor.", bahasaLabel: "Dil",
@@ -452,13 +463,14 @@ const BAHASA = {
     masuk: "وارد", keluar: "صادر", mengeditTransaksi: "جارٍ تعديل العملية", batal: "إلغاء",
     pemasukan: "دخل", pengeluaran: "مصروف", labelJumlah: "المبلغ",
     kursLabel: "سعر الصرف (تقريبي)",
+    kursOnline: "السعر يتبع القيمة الحالية المباشرة (متصل)", kursManual: "تم ضبط السعر يدويًا", kursPerkiraan: "سعر تقريبي (غير متصل)",
     labelKeterangan: "ملاحظة (اختياري)", simpanBtn: "+ حفظ العملية", updateBtn: "✎ تحديث العملية",
     rincianTransaksiJudul: "تفاصيل العمليات", semuaBulan: "كل الأشهر",
     transaksiKosongAwal: "لا توجد عمليات بعد. أضف أول عملية أعلاه.",
     transaksiKosongBulan: "لا توجد عمليات في هذا الشهر.", exportBtn: "تصدير / طباعة التقرير (PDF)",
     exportCatatan: 'سيتم فتح نافذة الطباعة في هاتفك — اختر "حفظ كملف PDF".',
     pengaturanDataJudul: "إعدادات البيانات",
-    pengaturanDataDesc: "تبقى جميع البيانات على هذا الجهاز (بدون اتصال)؛ لا يتم إرسال أي شيء إلى أي خادم.",
+    pengaturanDataDesc: "تبقى بيانات معاملاتك على هذا الجهاز (بدون اتصال) ولا تُرسل أبدًا إلى أي خادم. عند توفر الإنترنت، يقوم التطبيق فقط بجلب سعر الصرف الحالي من خدمة عامة — دون إرسال أي بيانات شخصية.",
     backupBtn: "نسخ احتياطي للبيانات", imporBtn: "استيراد البيانات", hapusSemuaBtn: "⚠ حذف جميع البيانات",
     hapusSemuaKonfirmasi: "⚠ اضغط مرة أخرى للتأكيد",
     offlineStatus: "📴 أنت غير متصل — بياناتك لا تزال آمنة على هذا الجهاز.", bahasaLabel: "اللغة",
@@ -477,13 +489,14 @@ const BAHASA = {
     masuk: "आय", keluar: "व्यय", mengeditTransaksi: "लेन-देन संपादित हो रहा है", batal: "रद्द करें",
     pemasukan: "आय", pengeluaran: "व्यय", labelJumlah: "राशि",
     kursLabel: "विनिमय दर (अनुमानित)",
+    kursOnline: "दर वर्तमान लाइव मूल्य के अनुसार है (ऑनलाइन)", kursManual: "दर मैन्युअल रूप से समायोजित", kursPerkiraan: "अनुमानित दर (ऑफ़लाइन)",
     labelKeterangan: "नोट (वैकल्पिक)", simpanBtn: "+ लेन-देन सहेजें", updateBtn: "✎ लेन-देन अपडेट करें",
     rincianTransaksiJudul: "लेन-देन विवरण", semuaBulan: "सभी महीने",
     transaksiKosongAwal: "अभी कोई लेन-देन नहीं है। ऊपर पहला जोड़ें।",
     transaksiKosongBulan: "इस महीने कोई लेन-देन नहीं।", exportBtn: "रिपोर्ट निर्यात / प्रिंट करें (PDF)",
     exportCatatan: 'आपके फोन का प्रिंट डायलॉग खुलेगा — "PDF के रूप में सहेजें" चुनें।',
     pengaturanDataJudul: "डेटा सेटिंग्स",
-    pengaturanDataDesc: "सभी डेटा इसी डिवाइस पर रहता है (ऑफ़लाइन); कुछ भी किसी सर्वर पर नहीं भेजा जाता।",
+    pengaturanDataDesc: "आपका लेन-देन डेटा इसी डिवाइस पर रहता है (ऑफ़लाइन) और कभी किसी सर्वर पर नहीं भेजा जाता। इंटरनेट होने पर, ऐप केवल एक सार्वजनिक सेवा से मौजूदा विनिमय दर लाता है — कोई व्यक्तिगत डेटा नहीं भेजा जाता।",
     backupBtn: "डेटा बैकअप करें", imporBtn: "डेटा आयात करें", hapusSemuaBtn: "⚠ सभी डेटा हटाएं",
     hapusSemuaKonfirmasi: "⚠ पुष्टि के लिए फिर से टैप करें",
     offlineStatus: "📴 आप ऑफ़लाइन हैं — आपका डेटा इस डिवाइस पर सुरक्षित है।", bahasaLabel: "भाषा",
@@ -502,13 +515,14 @@ const BAHASA = {
     masuk: "আয়", keluar: "ব্যয়", mengeditTransaksi: "লেনদেন সম্পাদনা হচ্ছে", batal: "বাতিল",
     pemasukan: "আয়", pengeluaran: "ব্যয়", labelJumlah: "পরিমাণ",
     kursLabel: "বিনিময় হার (আনুমানিক)",
+    kursOnline: "হার বর্তমান লাইভ মান অনুসরণ করে (অনলাইন)", kursManual: "হার ম্যানুয়ালি সামঞ্জস্য করা হয়েছে", kursPerkiraan: "আনুমানিক হার (অফলাইন)",
     labelKeterangan: "নোট (ঐচ্ছিক)", simpanBtn: "+ লেনদেন সংরক্ষণ করুন", updateBtn: "✎ লেনদেন আপডেট করুন",
     rincianTransaksiJudul: "লেনদেনের বিবরণ", semuaBulan: "সব মাস",
     transaksiKosongAwal: "এখনো কোনো লেনদেন নেই। উপরে প্রথমটি যোগ করুন।",
     transaksiKosongBulan: "এই মাসে কোনো লেনদেন নেই।", exportBtn: "রিপোর্ট এক্সপোর্ট / প্রিন্ট করুন (PDF)",
     exportCatatan: 'আপনার ফোনের প্রিন্ট ডায়ালগ খুলবে — "PDF হিসেবে সংরক্ষণ করুন" নির্বাচন করুন।',
     pengaturanDataJudul: "ডেটা সেটিংস",
-    pengaturanDataDesc: "সব ডেটা এই ডিভাইসেই থাকে (অফলাইন); কোনো সার্ভারে পাঠানো হয় না।",
+    pengaturanDataDesc: "আপনার লেনদেনের তথ্য এই ডিভাইসেই থাকে (অফলাইন) এবং কখনো কোনো সার্ভারে পাঠানো হয় না। ইন্টারনেট থাকলে, অ্যাপটি শুধু একটি পাবলিক সেবা থেকে বর্তমান বিনিময় হার আনে — কোনো ব্যক্তিগত তথ্য পাঠানো হয় না।",
     backupBtn: "ডেটা ব্যাকআপ করুন", imporBtn: "ডেটা আমদানি করুন", hapusSemuaBtn: "⚠ সব ডেটা মুছুন",
     hapusSemuaKonfirmasi: "⚠ নিশ্চিত করতে আবার চাপুন",
     offlineStatus: "📴 আপনি অফলাইনে আছেন — আপনার ডেটা এই ডিভাইসে নিরাপদ আছে।", bahasaLabel: "ভাষা",
@@ -527,13 +541,14 @@ const BAHASA = {
     masuk: "收入", keluar: "支出", mengeditTransaksi: "正在编辑交易", batal: "取消",
     pemasukan: "收入", pengeluaran: "支出", labelJumlah: "金额",
     kursLabel: "汇率（估算）",
+    kursOnline: "汇率跟随当前实时数值（在线）", kursManual: "汇率已手动调整", kursPerkiraan: "估算汇率（离线）",
     labelKeterangan: "备注（可选）", simpanBtn: "+ 保存交易", updateBtn: "✎ 更新交易",
     rincianTransaksiJudul: "交易明细", semuaBulan: "所有月份",
     transaksiKosongAwal: "还没有交易记录，请在上方添加第一条。",
     transaksiKosongBulan: "本月没有交易记录。", exportBtn: "导出 / 打印报告 (PDF)",
     exportCatatan: '将打开手机的打印对话框——请选择"存储为 PDF"。',
     pengaturanDataJudul: "数据设置",
-    pengaturanDataDesc: "所有数据都保存在此设备上（离线），不会发送到任何服务器。",
+    pengaturanDataDesc: "您的交易数据保存在此设备上（离线），绝不会发送到任何服务器。联网时，应用仅从公共服务获取当前汇率——不会发送任何个人数据。",
     backupBtn: "备份数据", imporBtn: "导入数据", hapusSemuaBtn: "⚠ 删除所有数据",
     hapusSemuaKonfirmasi: "⚠ 再次点击以确认",
     offlineStatus: "📴 您已离线——数据仍安全保存在此设备上。", bahasaLabel: "语言",
@@ -552,13 +567,14 @@ const BAHASA = {
     masuk: "収入", keluar: "支出", mengeditTransaksi: "取引を編集中", batal: "キャンセル",
     pemasukan: "収入", pengeluaran: "支出", labelJumlah: "金額",
     kursLabel: "為替レート（概算）",
+    kursOnline: "レートは現在のライブ値に従います（オンライン）", kursManual: "レートは手動で調整されています", kursPerkiraan: "概算レート（オフライン）",
     labelKeterangan: "メモ（任意）", simpanBtn: "+ 取引を保存", updateBtn: "✎ 取引を更新",
     rincianTransaksiJudul: "取引明細", semuaBulan: "すべての月",
     transaksiKosongAwal: "まだ取引がありません。上で最初の取引を追加してください。",
     transaksiKosongBulan: "今月の取引はありません。", exportBtn: "レポートを書き出し／印刷 (PDF)",
     exportCatatan: 'スマホの印刷ダイアログが開きます — 「PDFとして保存」を選んでください。',
     pengaturanDataJudul: "データ設定",
-    pengaturanDataDesc: "すべてのデータはこの端末内に保存され（オフライン）、サーバーには送信されません。",
+    pengaturanDataDesc: "取引データはこの端末内に保存され（オフライン）、サーバーに送信されることはありません。オンライン時、アプリは公開サービスから現在の為替レートを取得するだけで、個人データは一切送信されません。",
     backupBtn: "データをバックアップ", imporBtn: "データをインポート", hapusSemuaBtn: "⚠ すべてのデータを削除",
     hapusSemuaKonfirmasi: "⚠ 確認のためもう一度タップしてください",
     offlineStatus: "📴 オフラインです — データはこの端末に安全に保存されています。", bahasaLabel: "言語",
@@ -577,13 +593,14 @@ const BAHASA = {
     masuk: "수입", keluar: "지출", mengeditTransaksi: "거래 수정 중", batal: "취소",
     pemasukan: "수입", pengeluaran: "지출", labelJumlah: "금액",
     kursLabel: "환율 (추정치)",
+    kursOnline: "환율이 현재 실시간 값을 따릅니다 (온라인)", kursManual: "환율이 수동으로 조정됨", kursPerkiraan: "추정 환율 (오프라인)",
     labelKeterangan: "메모 (선택)", simpanBtn: "+ 거래 저장", updateBtn: "✎ 거래 업데이트",
     rincianTransaksiJudul: "거래 내역", semuaBulan: "전체 월",
     transaksiKosongAwal: "아직 거래 내역이 없습니다. 위에서 첫 거래를 추가하세요.",
     transaksiKosongBulan: "이번 달 거래 내역이 없습니다.", exportBtn: "보고서 내보내기 / 인쇄 (PDF)",
     exportCatatan: '휴대폰 인쇄 대화상자가 열립니다 — "PDF로 저장"을 선택하세요.',
     pengaturanDataJudul: "데이터 설정",
-    pengaturanDataDesc: "모든 데이터는 이 기기에 저장되며(오프라인), 서버로 전송되지 않습니다.",
+    pengaturanDataDesc: "거래 데이터는 이 기기에만 저장되며(오프라인) 서버로 전송되지 않습니다. 온라인 상태일 때 앱은 공개 서비스에서 현재 환율만 가져오며, 개인 데이터는 전송되지 않습니다.",
     backupBtn: "데이터 백업", imporBtn: "데이터 가져오기", hapusSemuaBtn: "⚠ 모든 데이터 삭제",
     hapusSemuaKonfirmasi: "⚠ 확인하려면 다시 탭하세요",
     offlineStatus: "📴 오프라인 상태입니다 — 데이터는 이 기기에 안전하게 보관됩니다.", bahasaLabel: "언어",
@@ -602,13 +619,14 @@ const BAHASA = {
     masuk: "Thu", keluar: "Chi", mengeditTransaksi: "Đang chỉnh sửa giao dịch", batal: "Hủy",
     pemasukan: "Thu nhập", pengeluaran: "Chi tiêu", labelJumlah: "Số tiền",
     kursLabel: "Tỷ giá (ước tính)",
+    kursOnline: "Tỷ giá theo giá trị trực tuyến hiện tại", kursManual: "Tỷ giá đã được điều chỉnh thủ công", kursPerkiraan: "Tỷ giá ước tính (ngoại tuyến)",
     labelKeterangan: "Ghi chú (tùy chọn)", simpanBtn: "+ Lưu Giao Dịch", updateBtn: "✎ Cập Nhật Giao Dịch",
     rincianTransaksiJudul: "Chi Tiết Giao Dịch", semuaBulan: "Tất cả các tháng",
     transaksiKosongAwal: "Chưa có giao dịch nào. Thêm giao dịch đầu tiên ở trên.",
     transaksiKosongBulan: "Không có giao dịch nào trong tháng này.", exportBtn: "Xuất / In Báo Cáo (PDF)",
     exportCatatan: 'Hộp thoại in của điện thoại sẽ mở — chọn "Lưu dưới dạng PDF".',
     pengaturanDataJudul: "Cài Đặt Dữ Liệu",
-    pengaturanDataDesc: "Mọi dữ liệu được lưu trên thiết bị này (ngoại tuyến); không gửi lên máy chủ nào.",
+    pengaturanDataDesc: "Dữ liệu giao dịch của bạn được lưu trên thiết bị này (ngoại tuyến) và không bao giờ được gửi đến máy chủ nào. Khi có mạng, ứng dụng chỉ lấy tỷ giá hối đoái hiện tại từ một dịch vụ công khai — không gửi bất kỳ dữ liệu cá nhân nào.",
     backupBtn: "Sao Lưu Dữ Liệu", imporBtn: "Nhập Dữ Liệu", hapusSemuaBtn: "⚠ Xóa Tất Cả Dữ Liệu",
     hapusSemuaKonfirmasi: "⚠ Chạm lần nữa để xác nhận",
     offlineStatus: "📴 Bạn đang ngoại tuyến — dữ liệu vẫn an toàn trên thiết bị này.", bahasaLabel: "Ngôn ngữ",
@@ -627,13 +645,14 @@ const BAHASA = {
     masuk: "รับ", keluar: "จ่าย", mengeditTransaksi: "กำลังแก้ไขรายการ", batal: "ยกเลิก",
     pemasukan: "รายรับ", pengeluaran: "รายจ่าย", labelJumlah: "จำนวนเงิน",
     kursLabel: "อัตราแลกเปลี่ยน (โดยประมาณ)",
+    kursOnline: "อัตราแลกเปลี่ยนตามค่าปัจจุบันแบบสด (ออนไลน์)", kursManual: "ปรับอัตราด้วยตนเอง", kursPerkiraan: "อัตราโดยประมาณ (ออฟไลน์)",
     labelKeterangan: "หมายเหตุ (ไม่บังคับ)", simpanBtn: "+ บันทึกรายการ", updateBtn: "✎ อัปเดตรายการ",
     rincianTransaksiJudul: "รายละเอียดรายการ", semuaBulan: "ทุกเดือน",
     transaksiKosongAwal: "ยังไม่มีรายการ เพิ่มรายการแรกของคุณด้านบน",
     transaksiKosongBulan: "ไม่มีรายการในเดือนนี้", exportBtn: "ส่งออก / พิมพ์รายงาน (PDF)",
     exportCatatan: 'หน้าต่างพิมพ์ของโทรศัพท์จะเปิดขึ้น — เลือก "บันทึกเป็น PDF"',
     pengaturanDataJudul: "การตั้งค่าข้อมูล",
-    pengaturanDataDesc: "ข้อมูลทั้งหมดเก็บไว้ในอุปกรณ์นี้ (ออฟไลน์) ไม่ส่งไปยังเซิร์ฟเวอร์ใดๆ",
+    pengaturanDataDesc: "ข้อมูลธุรกรรมของคุณเก็บไว้ในอุปกรณ์นี้ (ออฟไลน์) และไม่ถูกส่งไปยังเซิร์ฟเวอร์ใดๆ เมื่อมีอินเทอร์เน็ต แอปจะดึงเฉพาะอัตราแลกเปลี่ยนปัจจุบันจากบริการสาธารณะเท่านั้น โดยไม่ส่งข้อมูลส่วนตัวใดๆ",
     backupBtn: "สำรองข้อมูล", imporBtn: "นำเข้าข้อมูล", hapusSemuaBtn: "⚠ ลบข้อมูลทั้งหมด",
     hapusSemuaKonfirmasi: "⚠ แตะอีกครั้งเพื่อยืนยัน",
     offlineStatus: "📴 คุณออฟไลน์อยู่ — ข้อมูลของคุณยังปลอดภัยอยู่ในอุปกรณ์นี้", bahasaLabel: "ภาษา",
@@ -652,13 +671,14 @@ const BAHASA = {
     masuk: "Masuk", keluar: "Keluar", mengeditTransaksi: "Sedang mengedit transaksi", batal: "Batal",
     pemasukan: "Pendapatan", pengeluaran: "Perbelanjaan", labelJumlah: "Jumlah",
     kursLabel: "Kadar pertukaran (anggaran)",
+    kursOnline: "Kadar mengikut nilai semasa (dalam talian)", kursManual: "Kadar diselaraskan secara manual", kursPerkiraan: "Kadar anggaran (luar talian)",
     labelKeterangan: "Catatan (pilihan)", simpanBtn: "+ Simpan Transaksi", updateBtn: "✎ Kemas Kini Transaksi",
     rincianTransaksiJudul: "Butiran Transaksi", semuaBulan: "Semua bulan",
     transaksiKosongAwal: "Belum ada transaksi. Tambah yang pertama di atas.",
     transaksiKosongBulan: "Tiada transaksi bulan ini.", exportBtn: "Eksport / Cetak Laporan (PDF)",
     exportCatatan: 'Ini akan membuka dialog cetak telefon anda — pilih "Simpan sebagai PDF".',
     pengaturanDataJudul: "Tetapan Data",
-    pengaturanDataDesc: "Semua data kekal pada peranti ini (luar talian); tiada apa dihantar ke pelayan.",
+    pengaturanDataDesc: "Data transaksi anda kekal pada peranti ini (luar talian) dan tidak pernah dihantar ke mana-mana pelayan. Apabila ada internet, aplikasi hanya mendapatkan kadar pertukaran semasa daripada perkhidmatan awam — tiada data peribadi dihantar.",
     backupBtn: "Sandarkan Data", imporBtn: "Import Data", hapusSemuaBtn: "⚠ Padam Semua Data",
     hapusSemuaKonfirmasi: "⚠ Ketik sekali lagi untuk mengesahkan",
     offlineStatus: "📴 Anda luar talian — data anda masih selamat pada peranti ini.", bahasaLabel: "Bahasa",
@@ -677,13 +697,14 @@ const BAHASA = {
     masuk: "Ingia", keluar: "Toka", mengeditTransaksi: "Inahariri muamala", batal: "Ghairi",
     pemasukan: "Mapato", pengeluaran: "Matumizi", labelJumlah: "Kiasi",
     kursLabel: "Kiwango cha ubadilishaji (makadirio)",
+    kursOnline: "Kiwango kinafuata thamani ya sasa (mtandaoni)", kursManual: "Kiwango kimerekebishwa mwenyewe", kursPerkiraan: "Kiwango cha makadirio (nje ya mtandao)",
     labelKeterangan: "Maelezo (hiari)", simpanBtn: "+ Hifadhi Muamala", updateBtn: "✎ Sasisha Muamala",
     rincianTransaksiJudul: "Maelezo ya Miamala", semuaBulan: "Miezi yote",
     transaksiKosongAwal: "Bado hakuna miamala. Ongeza ya kwanza hapo juu.",
     transaksiKosongBulan: "Hakuna miamala mwezi huu.", exportBtn: "Hamisha / Chapisha Ripoti (PDF)",
     exportCatatan: 'Hii itafungua kisanduku cha kuchapisha cha simu yako — chagua "Hifadhi kama PDF".',
     pengaturanDataJudul: "Mipangilio ya Data",
-    pengaturanDataDesc: "Data yote inabaki kwenye kifaa hiki (bila mtandao); hakuna kinachotumwa kwa seva yoyote.",
+    pengaturanDataDesc: "Data ya miamala yako inabaki kwenye kifaa hiki (bila mtandao) na haitumwi kamwe kwa seva yoyote. Ukiwa na mtandao, programu hupata tu kiwango cha ubadilishaji cha sasa kutoka huduma ya umma — bila kutuma data yoyote binafsi.",
     backupBtn: "Hifadhi Nakala", imporBtn: "Leta Data", hapusSemuaBtn: "⚠ Futa Data Yote",
     hapusSemuaKonfirmasi: "⚠ Gusa tena kuthibitisha",
     offlineStatus: "📴 Huna mtandao — data yako bado iko salama kwenye kifaa hiki.", bahasaLabel: "Lugha",
@@ -742,16 +763,77 @@ function pilihMataUang(kodeMU, simpanKePenyimpanan) {
 function ambilSemuaKursOverride() {
   try { return JSON.parse(localStorage.getItem(KUNCI_KURS)) || {}; } catch (e) { return {}; }
 }
-function ambilKurs(kodeMU) {
-  const override = ambilSemuaKursOverride();
-  if (override[kodeMU] && override[kodeMU] > 0) return override[kodeMU];
-  return (MATA_UANG[kodeMU] && MATA_UANG[kodeMU].kurs) || 1;
-}
 function simpanKursOverride(kodeMU, nilai) {
   const override = ambilSemuaKursOverride();
-  override[kodeMU] = nilai;
+  override[kodeMU] = { nilai, waktu: Date.now() };
   localStorage.setItem(KUNCI_KURS, JSON.stringify(override));
 }
+
+// ====== KURS TERKINI DARI INTERNET (saat online) ======
+const KUNCI_KURS_ONLINE = "ck_kurs_online";
+const KADALUARSA_KURS_ONLINE = 12 * 60 * 60 * 1000; // ambil ulang tiap 12 jam
+let sedangMengambilKurs = false;
+
+function ambilKursOnlineTersimpan() {
+  try { return JSON.parse(localStorage.getItem(KUNCI_KURS_ONLINE)); } catch (e) { return null; }
+}
+
+// Menentukan nilai kurs mana yang dipakai untuk kodeMU:
+// - kurs online dipakai sebagai acuan utama begitu tersedia,
+// - KECUALI ada penyesuaian manual yang dibuat SETELAH pengambilan online terakhir
+//   (supaya koreksi manual Anda tidak langsung tertimpa), dan
+// - jika tidak ada koneksi sama sekali, tetap pakai nilai perkiraan bawaan.
+function sumberKurs(kodeMU) {
+  const online = ambilKursOnlineTersimpan();
+  const override = ambilSemuaKursOverride()[kodeMU];
+  const adaOnline = online && online.rates && online.rates[kodeMU] > 0;
+  const adaOverride = override && override.nilai > 0;
+  if (adaOverride && (!adaOnline || override.waktu > online.waktu)) return "manual";
+  if (adaOnline) return "online";
+  if (adaOverride) return "manual";
+  return "perkiraan";
+}
+function statusKurs(kodeMU) { return sumberKurs(kodeMU); }
+function ambilKurs(kodeMU) {
+  const sumber = sumberKurs(kodeMU);
+  if (sumber === "manual") return ambilSemuaKursOverride()[kodeMU].nilai;
+  if (sumber === "online") return ambilKursOnlineTersimpan().rates[kodeMU];
+  return (MATA_UANG[kodeMU] && MATA_UANG[kodeMU].kurs) || 1;
+}
+
+// Ambil kurs semua mata uang sekaligus (1x panggilan) dari layanan kurs publik gratis.
+// Hanya mengirim permintaan kurs (tidak ada data pribadi/transaksi yang dikirim).
+async function perbaruiKursOnline(paksa) {
+  if (sedangMengambilKurs) return;
+  if (!navigator.onLine) return;
+  const data = ambilKursOnlineTersimpan();
+  if (!paksa && data && Date.now() - data.waktu < KADALUARSA_KURS_ONLINE) return;
+
+  sedangMengambilKurs = true;
+  try {
+    const kontrol = new AbortController();
+    const batasWaktu = setTimeout(() => kontrol.abort(), 6000);
+    const res = await fetch("https://open.er-api.com/v6/latest/IDR", { signal: kontrol.signal });
+    clearTimeout(batasWaktu);
+    const json = await res.json();
+    if (json && json.result === "success" && json.rates) {
+      const rates = {};
+      Object.keys(MATA_UANG).forEach((kode) => {
+        if (kode === "IDR") return;
+        const idrKeAsing = json.rates[kode]; // 1 IDR = idrKeAsing <kode>
+        if (idrKeAsing > 0) rates[kode] = 1 / idrKeAsing; // 1 <kode> = ? IDR
+      });
+      localStorage.setItem(KUNCI_KURS_ONLINE, JSON.stringify({ waktu: Date.now(), rates }));
+      perbaruiBarisKurs();
+      render();
+    }
+  } catch (e) {
+    // Gagal ambil kurs (offline/layanan bermasalah) — tetap pakai kurs manual/perkiraan.
+  } finally {
+    sedangMengambilKurs = false;
+  }
+}
+window.addEventListener("online", () => perbaruiKursOnline(true));
 
 // Ubah angka Rupiah (satuan tersimpan) menjadi mata uang aktif untuk DITAMPILKAN.
 function keMataUangAktif(angkaRupiah) {
@@ -832,6 +914,7 @@ document.getElementById("pilihBahasa").addEventListener("change", (e) => {
 document.getElementById("inputKurs").addEventListener("input", (e) => {
   const nilai = parseFloat(e.target.value.replace(",", "."));
   if (nilai > 0) simpanKursOverride(mataUangAktif, nilai);
+  perbaruiBarisKurs();
   render();
 });
 
@@ -840,6 +923,7 @@ function perbaruiBarisKurs() {
   const inputKurs = document.getElementById("inputKurs");
   const teksKurs1 = document.getElementById("txKurs1");
   const teksKursIDR = document.getElementById("txKursIDR");
+  const statusEl = document.getElementById("statusKurs");
   if (mataUangAktif === "IDR") {
     baris.style.display = "none";
     return;
@@ -847,7 +931,13 @@ function perbaruiBarisKurs() {
   baris.style.display = "flex";
   teksKurs1.textContent = `1 ${mataUangAktif} =`;
   teksKursIDR.textContent = "Rp";
-  if (document.activeElement !== inputKurs) inputKurs.value = ambilKurs(mataUangAktif);
+  if (document.activeElement !== inputKurs) {
+    const kurs = ambilKurs(mataUangAktif);
+    inputKurs.value = Number.isInteger(kurs) ? kurs : kurs.toFixed(2);
+  }
+  const status = statusKurs(mataUangAktif);
+  statusEl.textContent = status === "online" ? "🟢" : status === "manual" ? "✎" : "⚪";
+  statusEl.title = status === "online" ? t("kursOnline") : status === "manual" ? t("kursManual") : t("kursPerkiraan");
 }
 
 // ====== PENYIMPANAN LOKAL (tidak ke server manapun) ======
@@ -1179,6 +1269,8 @@ if ("serviceWorker" in navigator) {
 // ====== MULAI ======
 isiPilihanBahasa();
 terapkanBahasa();
+perbaruiKursOnline();
+setInterval(() => perbaruiKursOnline(), 60 * 60 * 1000); // cek tiap jam, ambil ulang jika sudah lebih dari 12 jam
 </script>
 </body>
 </html>
