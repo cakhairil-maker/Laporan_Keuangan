@@ -102,7 +102,9 @@
 <div class="wrap">
   <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
     <h1 id="txJudulApp">Catatan Keuangan</h1>
-    <select id="pilihBahasa" class="no-print" style="margin-top:2px;"></select>
+    <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end;">
+      <select id="pilihBahasa" class="no-print"></select>
+    </div>
   </div>
   <div class="pil" id="tanggalHariIni"></div>
   <div class="status-offline" id="statusOffline"></div>
@@ -148,7 +150,7 @@
       <button type="button" class="toggle-btn" id="btnPengeluaran">Pengeluaran</button>
     </div>
     <label class="label-kecil" id="txLabelJumlah">Jumlah (Rp)</label>
-    <input type="text" inputmode="numeric" id="inputJumlah" placeholder="Contoh: 50000" />
+    <input type="text" inputmode="decimal" id="inputJumlah" placeholder="Contoh: 50000" />
     <label class="label-kecil" id="txLabelKeterangan">Keterangan (opsional)</label>
     <input type="text" id="inputKeterangan" placeholder="Contoh: Gaji, Makan siang, dll" />
     <button type="submit" class="btn-utama" id="btnSimpan">+ Simpan Transaksi</button>
@@ -178,6 +180,12 @@
       <button class="btn-tipis" id="btnPilihImpor">⬆ <span id="txImporBtn">Impor Data</span></button>
       <input type="file" accept="application/json" id="inputImpor" style="display:none" />
     </div>
+    <div id="barisKurs" class="no-print" style="display:none;align-items:center;gap:8px;margin-bottom:12px;font-size:12px;color:#6B7280;">
+      <span id="txKursLabel">Kurs (perkiraan)</span>:
+      <span id="txKurs1">1 USD =</span>
+      <input type="text" inputmode="decimal" id="inputKurs" style="width:90px;padding:6px 8px;border:1px solid #E5E7EB;border-radius:8px;font-size:12px;" />
+      <span id="txKursIDR">Rp</span>
+    </div>
     <button class="btn-bahaya" id="btnHapusSemua">⚠ Hapus Semua Data</button>
     <div class="pesan" id="pesanData"></div>
   </div>
@@ -192,7 +200,8 @@ const BAHASA = {
     saldoSaatIni: "💼 Saldo saat ini", kotakPemasukan: "↑ Pemasukan", kotakPengeluaran: "↓ Pengeluaran",
     ringkasanBulananJudul: "Ringkasan Bulanan", ringkasanKosong: "Belum ada data untuk ditampilkan per bulan.",
     masuk: "Masuk", keluar: "Keluar", mengeditTransaksi: "Mengedit transaksi", batal: "Batal",
-    pemasukan: "Pemasukan", pengeluaran: "Pengeluaran", labelJumlah: "Jumlah (Rp)",
+    pemasukan: "Pemasukan", pengeluaran: "Pengeluaran", labelJumlah: "Jumlah",
+    kursLabel: "Kurs (perkiraan)",
     labelKeterangan: "Keterangan (opsional)", simpanBtn: "+ Simpan Transaksi", updateBtn: "✎ Update Transaksi",
     rincianTransaksiJudul: "Rincian Transaksi", semuaBulan: "Semua bulan",
     transaksiKosongAwal: "Belum ada transaksi. Tambahkan transaksi pertama Anda di atas.",
@@ -216,7 +225,8 @@ const BAHASA = {
     saldoSaatIni: "💼 Current balance", kotakPemasukan: "↑ Income", kotakPengeluaran: "↓ Expense",
     ringkasanBulananJudul: "Monthly Summary", ringkasanKosong: "No monthly data to show yet.",
     masuk: "In", keluar: "Out", mengeditTransaksi: "Editing transaction", batal: "Cancel",
-    pemasukan: "Income", pengeluaran: "Expense", labelJumlah: "Amount (Rp)",
+    pemasukan: "Income", pengeluaran: "Expense", labelJumlah: "Amount",
+    kursLabel: "Exchange rate (estimate)",
     labelKeterangan: "Note (optional)", simpanBtn: "+ Save Transaction", updateBtn: "✎ Update Transaction",
     rincianTransaksiJudul: "Transaction Details", semuaBulan: "All months",
     transaksiKosongAwal: "No transactions yet. Add your first one above.",
@@ -240,7 +250,8 @@ const BAHASA = {
     saldoSaatIni: "💼 Saldo actual", kotakPemasukan: "↑ Ingresos", kotakPengeluaran: "↓ Gastos",
     ringkasanBulananJudul: "Resumen Mensual", ringkasanKosong: "Aún no hay datos mensuales para mostrar.",
     masuk: "Entrada", keluar: "Salida", mengeditTransaksi: "Editando transacción", batal: "Cancelar",
-    pemasukan: "Ingreso", pengeluaran: "Gasto", labelJumlah: "Monto (Rp)",
+    pemasukan: "Ingreso", pengeluaran: "Gasto", labelJumlah: "Monto",
+    kursLabel: "Tipo de cambio (estimado)",
     labelKeterangan: "Nota (opcional)", simpanBtn: "+ Guardar Transacción", updateBtn: "✎ Actualizar Transacción",
     rincianTransaksiJudul: "Detalle de Transacciones", semuaBulan: "Todos los meses",
     transaksiKosongAwal: "Aún no hay transacciones. Agrega la primera arriba.",
@@ -264,7 +275,8 @@ const BAHASA = {
     saldoSaatIni: "💼 Solde actuel", kotakPemasukan: "↑ Revenus", kotakPengeluaran: "↓ Dépenses",
     ringkasanBulananJudul: "Résumé Mensuel", ringkasanKosong: "Aucune donnée mensuelle à afficher pour l'instant.",
     masuk: "Entrée", keluar: "Sortie", mengeditTransaksi: "Modification de la transaction", batal: "Annuler",
-    pemasukan: "Revenu", pengeluaran: "Dépense", labelJumlah: "Montant (Rp)",
+    pemasukan: "Revenu", pengeluaran: "Dépense", labelJumlah: "Montant",
+    kursLabel: "Taux de change (estimation)",
     labelKeterangan: "Note (facultatif)", simpanBtn: "+ Enregistrer la Transaction", updateBtn: "✎ Mettre à Jour",
     rincianTransaksiJudul: "Détail des Transactions", semuaBulan: "Tous les mois",
     transaksiKosongAwal: "Aucune transaction pour l'instant. Ajoutez-en une ci-dessus.",
@@ -288,7 +300,8 @@ const BAHASA = {
     saldoSaatIni: "💼 Aktueller Kontostand", kotakPemasukan: "↑ Einnahmen", kotakPengeluaran: "↓ Ausgaben",
     ringkasanBulananJudul: "Monatsübersicht", ringkasanKosong: "Noch keine monatlichen Daten vorhanden.",
     masuk: "Ein", keluar: "Aus", mengeditTransaksi: "Transaktion wird bearbeitet", batal: "Abbrechen",
-    pemasukan: "Einnahme", pengeluaran: "Ausgabe", labelJumlah: "Betrag (Rp)",
+    pemasukan: "Einnahme", pengeluaran: "Ausgabe", labelJumlah: "Betrag",
+    kursLabel: "Wechselkurs (geschätzt)",
     labelKeterangan: "Notiz (optional)", simpanBtn: "+ Transaktion Speichern", updateBtn: "✎ Transaktion Aktualisieren",
     rincianTransaksiJudul: "Transaktionsdetails", semuaBulan: "Alle Monate",
     transaksiKosongAwal: "Noch keine Transaktionen. Fügen Sie oben Ihre erste hinzu.",
@@ -312,7 +325,8 @@ const BAHASA = {
     saldoSaatIni: "💼 Saldo atual", kotakPemasukan: "↑ Receitas", kotakPengeluaran: "↓ Despesas",
     ringkasanBulananJudul: "Resumo Mensal", ringkasanKosong: "Ainda não há dados mensais para mostrar.",
     masuk: "Entrada", keluar: "Saída", mengeditTransaksi: "Editando transação", batal: "Cancelar",
-    pemasukan: "Receita", pengeluaran: "Despesa", labelJumlah: "Valor (Rp)",
+    pemasukan: "Receita", pengeluaran: "Despesa", labelJumlah: "Valor",
+    kursLabel: "Taxa de câmbio (estimativa)",
     labelKeterangan: "Nota (opcional)", simpanBtn: "+ Salvar Transação", updateBtn: "✎ Atualizar Transação",
     rincianTransaksiJudul: "Detalhes das Transações", semuaBulan: "Todos os meses",
     transaksiKosongAwal: "Ainda não há transações. Adicione a primeira acima.",
@@ -336,7 +350,8 @@ const BAHASA = {
     saldoSaatIni: "💼 Saldo attuale", kotakPemasukan: "↑ Entrate", kotakPengeluaran: "↓ Uscite",
     ringkasanBulananJudul: "Riepilogo Mensile", ringkasanKosong: "Nessun dato mensile da mostrare ancora.",
     masuk: "Entrata", keluar: "Uscita", mengeditTransaksi: "Modifica transazione", batal: "Annulla",
-    pemasukan: "Entrata", pengeluaran: "Uscita", labelJumlah: "Importo (Rp)",
+    pemasukan: "Entrata", pengeluaran: "Uscita", labelJumlah: "Importo",
+    kursLabel: "Tasso di cambio (stima)",
     labelKeterangan: "Nota (opzionale)", simpanBtn: "+ Salva Transazione", updateBtn: "✎ Aggiorna Transazione",
     rincianTransaksiJudul: "Dettagli Transazioni", semuaBulan: "Tutti i mesi",
     transaksiKosongAwal: "Nessuna transazione ancora. Aggiungine una sopra.",
@@ -360,7 +375,8 @@ const BAHASA = {
     saldoSaatIni: "💼 Huidig saldo", kotakPemasukan: "↑ Inkomsten", kotakPengeluaran: "↓ Uitgaven",
     ringkasanBulananJudul: "Maandoverzicht", ringkasanKosong: "Nog geen maandgegevens om te tonen.",
     masuk: "In", keluar: "Uit", mengeditTransaksi: "Transactie bewerken", batal: "Annuleren",
-    pemasukan: "Inkomst", pengeluaran: "Uitgave", labelJumlah: "Bedrag (Rp)",
+    pemasukan: "Inkomst", pengeluaran: "Uitgave", labelJumlah: "Bedrag",
+    kursLabel: "Wisselkoers (schatting)",
     labelKeterangan: "Notitie (optioneel)", simpanBtn: "+ Transactie Opslaan", updateBtn: "✎ Transactie Bijwerken",
     rincianTransaksiJudul: "Transactiedetails", semuaBulan: "Alle maanden",
     transaksiKosongAwal: "Nog geen transacties. Voeg hierboven je eerste toe.",
@@ -384,7 +400,8 @@ const BAHASA = {
     saldoSaatIni: "💼 Текущий баланс", kotakPemasukan: "↑ Доход", kotakPengeluaran: "↓ Расход",
     ringkasanBulananJudul: "Сводка за Месяц", ringkasanKosong: "Пока нет данных за месяцы.",
     masuk: "Доход", keluar: "Расход", mengeditTransaksi: "Редактирование операции", batal: "Отмена",
-    pemasukan: "Доход", pengeluaran: "Расход", labelJumlah: "Сумма (Rp)",
+    pemasukan: "Доход", pengeluaran: "Расход", labelJumlah: "Сумма",
+    kursLabel: "Курс обмена (примерно)",
     labelKeterangan: "Заметка (необязательно)", simpanBtn: "+ Сохранить Операцию", updateBtn: "✎ Обновить Операцию",
     rincianTransaksiJudul: "Детали Операций", semuaBulan: "Все месяцы",
     transaksiKosongAwal: "Пока нет операций. Добавьте первую выше.",
@@ -408,7 +425,8 @@ const BAHASA = {
     saldoSaatIni: "💼 Güncel bakiye", kotakPemasukan: "↑ Gelir", kotakPengeluaran: "↓ Gider",
     ringkasanBulananJudul: "Aylık Özet", ringkasanKosong: "Henüz gösterilecek aylık veri yok.",
     masuk: "Giren", keluar: "Çıkan", mengeditTransaksi: "İşlem düzenleniyor", batal: "İptal",
-    pemasukan: "Gelir", pengeluaran: "Gider", labelJumlah: "Tutar (Rp)",
+    pemasukan: "Gelir", pengeluaran: "Gider", labelJumlah: "Tutar",
+    kursLabel: "Döviz kuru (tahmini)",
     labelKeterangan: "Not (isteğe bağlı)", simpanBtn: "+ İşlemi Kaydet", updateBtn: "✎ İşlemi Güncelle",
     rincianTransaksiJudul: "İşlem Detayları", semuaBulan: "Tüm aylar",
     transaksiKosongAwal: "Henüz işlem yok. Yukarıdan ilkini ekleyin.",
@@ -432,7 +450,8 @@ const BAHASA = {
     saldoSaatIni: "💼 الرصيد الحالي", kotakPemasukan: "↑ الدخل", kotakPengeluaran: "↓ المصروفات",
     ringkasanBulananJudul: "الملخص الشهري", ringkasanKosong: "لا توجد بيانات شهرية لعرضها بعد.",
     masuk: "وارد", keluar: "صادر", mengeditTransaksi: "جارٍ تعديل العملية", batal: "إلغاء",
-    pemasukan: "دخل", pengeluaran: "مصروف", labelJumlah: "المبلغ (Rp)",
+    pemasukan: "دخل", pengeluaran: "مصروف", labelJumlah: "المبلغ",
+    kursLabel: "سعر الصرف (تقريبي)",
     labelKeterangan: "ملاحظة (اختياري)", simpanBtn: "+ حفظ العملية", updateBtn: "✎ تحديث العملية",
     rincianTransaksiJudul: "تفاصيل العمليات", semuaBulan: "كل الأشهر",
     transaksiKosongAwal: "لا توجد عمليات بعد. أضف أول عملية أعلاه.",
@@ -456,7 +475,8 @@ const BAHASA = {
     saldoSaatIni: "💼 वर्तमान शेष", kotakPemasukan: "↑ आय", kotakPengeluaran: "↓ व्यय",
     ringkasanBulananJudul: "मासिक सारांश", ringkasanKosong: "अभी दिखाने के लिए मासिक डेटा नहीं है।",
     masuk: "आय", keluar: "व्यय", mengeditTransaksi: "लेन-देन संपादित हो रहा है", batal: "रद्द करें",
-    pemasukan: "आय", pengeluaran: "व्यय", labelJumlah: "राशि (Rp)",
+    pemasukan: "आय", pengeluaran: "व्यय", labelJumlah: "राशि",
+    kursLabel: "विनिमय दर (अनुमानित)",
     labelKeterangan: "नोट (वैकल्पिक)", simpanBtn: "+ लेन-देन सहेजें", updateBtn: "✎ लेन-देन अपडेट करें",
     rincianTransaksiJudul: "लेन-देन विवरण", semuaBulan: "सभी महीने",
     transaksiKosongAwal: "अभी कोई लेन-देन नहीं है। ऊपर पहला जोड़ें।",
@@ -480,7 +500,8 @@ const BAHASA = {
     saldoSaatIni: "💼 বর্তমান ব্যালেন্স", kotakPemasukan: "↑ আয়", kotakPengeluaran: "↓ ব্যয়",
     ringkasanBulananJudul: "মাসিক সারাংশ", ringkasanKosong: "এখনো দেখানোর মতো মাসিক তথ্য নেই।",
     masuk: "আয়", keluar: "ব্যয়", mengeditTransaksi: "লেনদেন সম্পাদনা হচ্ছে", batal: "বাতিল",
-    pemasukan: "আয়", pengeluaran: "ব্যয়", labelJumlah: "পরিমাণ (Rp)",
+    pemasukan: "আয়", pengeluaran: "ব্যয়", labelJumlah: "পরিমাণ",
+    kursLabel: "বিনিময় হার (আনুমানিক)",
     labelKeterangan: "নোট (ঐচ্ছিক)", simpanBtn: "+ লেনদেন সংরক্ষণ করুন", updateBtn: "✎ লেনদেন আপডেট করুন",
     rincianTransaksiJudul: "লেনদেনের বিবরণ", semuaBulan: "সব মাস",
     transaksiKosongAwal: "এখনো কোনো লেনদেন নেই। উপরে প্রথমটি যোগ করুন।",
@@ -504,7 +525,8 @@ const BAHASA = {
     saldoSaatIni: "💼 当前余额", kotakPemasukan: "↑ 收入", kotakPengeluaran: "↓ 支出",
     ringkasanBulananJudul: "月度汇总", ringkasanKosong: "暂无月度数据可显示。",
     masuk: "收入", keluar: "支出", mengeditTransaksi: "正在编辑交易", batal: "取消",
-    pemasukan: "收入", pengeluaran: "支出", labelJumlah: "金额 (Rp)",
+    pemasukan: "收入", pengeluaran: "支出", labelJumlah: "金额",
+    kursLabel: "汇率（估算）",
     labelKeterangan: "备注（可选）", simpanBtn: "+ 保存交易", updateBtn: "✎ 更新交易",
     rincianTransaksiJudul: "交易明细", semuaBulan: "所有月份",
     transaksiKosongAwal: "还没有交易记录，请在上方添加第一条。",
@@ -528,7 +550,8 @@ const BAHASA = {
     saldoSaatIni: "💼 現在の残高", kotakPemasukan: "↑ 収入", kotakPengeluaran: "↓ 支出",
     ringkasanBulananJudul: "月次サマリー", ringkasanKosong: "まだ表示できる月次データがありません。",
     masuk: "収入", keluar: "支出", mengeditTransaksi: "取引を編集中", batal: "キャンセル",
-    pemasukan: "収入", pengeluaran: "支出", labelJumlah: "金額 (Rp)",
+    pemasukan: "収入", pengeluaran: "支出", labelJumlah: "金額",
+    kursLabel: "為替レート（概算）",
     labelKeterangan: "メモ（任意）", simpanBtn: "+ 取引を保存", updateBtn: "✎ 取引を更新",
     rincianTransaksiJudul: "取引明細", semuaBulan: "すべての月",
     transaksiKosongAwal: "まだ取引がありません。上で最初の取引を追加してください。",
@@ -552,7 +575,8 @@ const BAHASA = {
     saldoSaatIni: "💼 현재 잔액", kotakPemasukan: "↑ 수입", kotakPengeluaran: "↓ 지출",
     ringkasanBulananJudul: "월별 요약", ringkasanKosong: "표시할 월별 데이터가 아직 없습니다.",
     masuk: "수입", keluar: "지출", mengeditTransaksi: "거래 수정 중", batal: "취소",
-    pemasukan: "수입", pengeluaran: "지출", labelJumlah: "금액 (Rp)",
+    pemasukan: "수입", pengeluaran: "지출", labelJumlah: "금액",
+    kursLabel: "환율 (추정치)",
     labelKeterangan: "메모 (선택)", simpanBtn: "+ 거래 저장", updateBtn: "✎ 거래 업데이트",
     rincianTransaksiJudul: "거래 내역", semuaBulan: "전체 월",
     transaksiKosongAwal: "아직 거래 내역이 없습니다. 위에서 첫 거래를 추가하세요.",
@@ -576,7 +600,8 @@ const BAHASA = {
     saldoSaatIni: "💼 Số dư hiện tại", kotakPemasukan: "↑ Thu nhập", kotakPengeluaran: "↓ Chi tiêu",
     ringkasanBulananJudul: "Tổng Kết Hàng Tháng", ringkasanKosong: "Chưa có dữ liệu hàng tháng để hiển thị.",
     masuk: "Thu", keluar: "Chi", mengeditTransaksi: "Đang chỉnh sửa giao dịch", batal: "Hủy",
-    pemasukan: "Thu nhập", pengeluaran: "Chi tiêu", labelJumlah: "Số tiền (Rp)",
+    pemasukan: "Thu nhập", pengeluaran: "Chi tiêu", labelJumlah: "Số tiền",
+    kursLabel: "Tỷ giá (ước tính)",
     labelKeterangan: "Ghi chú (tùy chọn)", simpanBtn: "+ Lưu Giao Dịch", updateBtn: "✎ Cập Nhật Giao Dịch",
     rincianTransaksiJudul: "Chi Tiết Giao Dịch", semuaBulan: "Tất cả các tháng",
     transaksiKosongAwal: "Chưa có giao dịch nào. Thêm giao dịch đầu tiên ở trên.",
@@ -600,7 +625,8 @@ const BAHASA = {
     saldoSaatIni: "💼 ยอดคงเหลือปัจจุบัน", kotakPemasukan: "↑ รายรับ", kotakPengeluaran: "↓ รายจ่าย",
     ringkasanBulananJudul: "สรุปรายเดือน", ringkasanKosong: "ยังไม่มีข้อมูลรายเดือนให้แสดง",
     masuk: "รับ", keluar: "จ่าย", mengeditTransaksi: "กำลังแก้ไขรายการ", batal: "ยกเลิก",
-    pemasukan: "รายรับ", pengeluaran: "รายจ่าย", labelJumlah: "จำนวนเงิน (Rp)",
+    pemasukan: "รายรับ", pengeluaran: "รายจ่าย", labelJumlah: "จำนวนเงิน",
+    kursLabel: "อัตราแลกเปลี่ยน (โดยประมาณ)",
     labelKeterangan: "หมายเหตุ (ไม่บังคับ)", simpanBtn: "+ บันทึกรายการ", updateBtn: "✎ อัปเดตรายการ",
     rincianTransaksiJudul: "รายละเอียดรายการ", semuaBulan: "ทุกเดือน",
     transaksiKosongAwal: "ยังไม่มีรายการ เพิ่มรายการแรกของคุณด้านบน",
@@ -624,7 +650,8 @@ const BAHASA = {
     saldoSaatIni: "💼 Baki semasa", kotakPemasukan: "↑ Pendapatan", kotakPengeluaran: "↓ Perbelanjaan",
     ringkasanBulananJudul: "Ringkasan Bulanan", ringkasanKosong: "Belum ada data bulanan untuk dipaparkan.",
     masuk: "Masuk", keluar: "Keluar", mengeditTransaksi: "Sedang mengedit transaksi", batal: "Batal",
-    pemasukan: "Pendapatan", pengeluaran: "Perbelanjaan", labelJumlah: "Jumlah (Rp)",
+    pemasukan: "Pendapatan", pengeluaran: "Perbelanjaan", labelJumlah: "Jumlah",
+    kursLabel: "Kadar pertukaran (anggaran)",
     labelKeterangan: "Catatan (pilihan)", simpanBtn: "+ Simpan Transaksi", updateBtn: "✎ Kemas Kini Transaksi",
     rincianTransaksiJudul: "Butiran Transaksi", semuaBulan: "Semua bulan",
     transaksiKosongAwal: "Belum ada transaksi. Tambah yang pertama di atas.",
@@ -648,7 +675,8 @@ const BAHASA = {
     saldoSaatIni: "💼 Salio la sasa", kotakPemasukan: "↑ Mapato", kotakPengeluaran: "↓ Matumizi",
     ringkasanBulananJudul: "Muhtasari wa Kila Mwezi", ringkasanKosong: "Bado hakuna data ya kila mwezi ya kuonyesha.",
     masuk: "Ingia", keluar: "Toka", mengeditTransaksi: "Inahariri muamala", batal: "Ghairi",
-    pemasukan: "Mapato", pengeluaran: "Matumizi", labelJumlah: "Kiasi (Rp)",
+    pemasukan: "Mapato", pengeluaran: "Matumizi", labelJumlah: "Kiasi",
+    kursLabel: "Kiwango cha ubadilishaji (makadirio)",
     labelKeterangan: "Maelezo (hiari)", simpanBtn: "+ Hifadhi Muamala", updateBtn: "✎ Sasisha Muamala",
     rincianTransaksiJudul: "Maelezo ya Miamala", semuaBulan: "Miezi yote",
     transaksiKosongAwal: "Bado hakuna miamala. Ongeza ya kwanza hapo juu.",
@@ -672,6 +700,72 @@ const BAHASA = {
 let bahasaAktif = localStorage.getItem(KUNCI_BAHASA) || "id";
 if (!BAHASA[bahasaAktif]) bahasaAktif = "id";
 
+// ====== MATA UANG (mengikuti bahasa yang dipilih) ======
+const KUNCI_KURS = "ck_kurs_override";
+// Kurs = perkiraan 1 unit mata uang asing setara berapa Rupiah.
+// Ini ANGKA PERKIRAAN (bukan data langsung/real-time, aplikasi bekerja offline)
+// dan bisa disesuaikan sendiri lewat "Pengaturan Data" bila dirasa sudah tidak akurat.
+const MATA_UANG = {
+  IDR: { simbol: "Rp", nama: "Rupiah Indonesia", desimal: 0, kurs: 1 },
+  USD: { simbol: "$", nama: "Dolar AS", desimal: 2, kurs: 15800 },
+  EUR: { simbol: "€", nama: "Euro", desimal: 2, kurs: 17200 },
+  RUB: { simbol: "₽", nama: "Rubel Rusia", desimal: 2, kurs: 165 },
+  TRY: { simbol: "₺", nama: "Lira Turki", desimal: 2, kurs: 460 },
+  EGP: { simbol: "ج.م", nama: "Pound Mesir", desimal: 2, kurs: 330 },
+  INR: { simbol: "₹", nama: "Rupee India", desimal: 2, kurs: 190 },
+  BDT: { simbol: "৳", nama: "Taka Bangladesh", desimal: 2, kurs: 145 },
+  CNY: { simbol: "¥", nama: "Yuan Tiongkok", desimal: 2, kurs: 2200 },
+  JPY: { simbol: "¥", nama: "Yen Jepang", desimal: 0, kurs: 106 },
+  KRW: { simbol: "₩", nama: "Won Korea", desimal: 0, kurs: 11.5 },
+  VND: { simbol: "₫", nama: "Dong Vietnam", desimal: 0, kurs: 0.64 },
+  THB: { simbol: "฿", nama: "Baht Thailand", desimal: 2, kurs: 460 },
+  MYR: { simbol: "RM", nama: "Ringgit Malaysia", desimal: 2, kurs: 3550 },
+  KES: { simbol: "KSh", nama: "Shilling Kenya", desimal: 2, kurs: 122 },
+};
+const BAHASA_MATA_UANG = {
+  id: "IDR", en: "USD", es: "EUR", fr: "EUR", de: "EUR", pt: "EUR", it: "EUR", nl: "EUR",
+  ru: "RUB", tr: "TRY", ar: "EGP", hi: "INR", bn: "BDT", zh: "CNY", ja: "JPY", ko: "KRW",
+  vi: "VND", th: "THB", ms: "MYR", sw: "KES",
+};
+
+const KUNCI_MATA_UANG = "ck_mata_uang";
+let mataUangAktif = localStorage.getItem(KUNCI_MATA_UANG) || BAHASA_MATA_UANG[bahasaAktif] || "IDR";
+if (!MATA_UANG[mataUangAktif]) mataUangAktif = "IDR";
+
+function kodeMataUangAktif() { return mataUangAktif; }
+function pilihMataUang(kodeMU, simpanKePenyimpanan) {
+  if (!MATA_UANG[kodeMU]) return;
+  mataUangAktif = kodeMU;
+  if (simpanKePenyimpanan) localStorage.setItem(KUNCI_MATA_UANG, mataUangAktif);
+}
+
+function ambilSemuaKursOverride() {
+  try { return JSON.parse(localStorage.getItem(KUNCI_KURS)) || {}; } catch (e) { return {}; }
+}
+function ambilKurs(kodeMU) {
+  const override = ambilSemuaKursOverride();
+  if (override[kodeMU] && override[kodeMU] > 0) return override[kodeMU];
+  return (MATA_UANG[kodeMU] && MATA_UANG[kodeMU].kurs) || 1;
+}
+function simpanKursOverride(kodeMU, nilai) {
+  const override = ambilSemuaKursOverride();
+  override[kodeMU] = nilai;
+  localStorage.setItem(KUNCI_KURS, JSON.stringify(override));
+}
+
+// Ubah angka Rupiah (satuan tersimpan) menjadi mata uang aktif untuk DITAMPILKAN.
+function keMataUangAktif(angkaRupiah) {
+  const kodeMU = kodeMataUangAktif();
+  if (kodeMU === "IDR") return angkaRupiah;
+  return angkaRupiah / ambilKurs(kodeMU);
+}
+// Ubah angka yang DIKETIK dalam mata uang aktif menjadi Rupiah untuk DISIMPAN.
+function keRupiah(angkaMataUangAktif) {
+  const kodeMU = kodeMataUangAktif();
+  if (kodeMU === "IDR") return angkaMataUangAktif;
+  return angkaMataUangAktif * ambilKurs(kodeMU);
+}
+
 function t(kunci, ...args) {
   const kamus = (BAHASA[bahasaAktif] && BAHASA[bahasaAktif].teks) || BAHASA.id.teks;
   const nilai = kamus[kunci] !== undefined ? kamus[kunci] : BAHASA.id.teks[kunci];
@@ -682,6 +776,14 @@ function isiPilihanBahasa() {
   const sel = document.getElementById("pilihBahasa");
   sel.innerHTML = Object.keys(BAHASA).map((kode) => `<option value="${kode}">${BAHASA[kode].nama}</option>`).join("");
   sel.value = bahasaAktif;
+}
+
+function terapkanMataUang() {
+  const mu = MATA_UANG[mataUangAktif];
+  const labelMU = mataUangAktif === "IDR" ? mu.simbol : `${mu.simbol} ${mataUangAktif}`;
+  document.getElementById("txLabelJumlah").textContent = `${t("labelJumlah")} (${labelMU})`;
+  perbaruiBarisKurs();
+  render();
 }
 
 function terapkanBahasa() {
@@ -700,7 +802,6 @@ function terapkanBahasa() {
   document.getElementById("txBatal").textContent = t("batal");
   document.getElementById("btnPemasukan").textContent = t("pemasukan");
   document.getElementById("btnPengeluaran").textContent = t("pengeluaran");
-  document.getElementById("txLabelJumlah").textContent = t("labelJumlah");
   document.getElementById("txLabelKeterangan").textContent = t("labelKeterangan");
   document.getElementById("txRincianTransaksiJudul").textContent = t("rincianTransaksiJudul");
   document.getElementById("txExportBtn").textContent = t("exportBtn");
@@ -709,6 +810,7 @@ function terapkanBahasa() {
   document.getElementById("txPengaturanDataDesc").textContent = t("pengaturanDataDesc");
   document.getElementById("txBackupBtn").textContent = t("backupBtn");
   document.getElementById("txImporBtn").textContent = t("imporBtn");
+  document.getElementById("txKursLabel").textContent = t("kursLabel");
   if (!konfirmasiHapus) document.getElementById("btnHapusSemua").textContent = "⚠ " + t("hapusSemuaBtn").replace(/^⚠\s*/, "");
   document.getElementById("namaLaporan").placeholder = t("labelNamaLaporan");
   document.getElementById("pelapor").placeholder = t("labelPelapor");
@@ -716,14 +818,37 @@ function terapkanBahasa() {
 
   tampilkanTanggalHariIni();
   perbaruiStatusOffline();
-  render();
+  terapkanMataUang();
 }
 
 document.getElementById("pilihBahasa").addEventListener("change", (e) => {
   bahasaAktif = e.target.value;
   localStorage.setItem(KUNCI_BAHASA, bahasaAktif);
+  // Mata uang selalu ikut berganti otomatis sesuai bahasa yang dipilih.
+  pilihMataUang(BAHASA_MATA_UANG[bahasaAktif] || "IDR", true);
   terapkanBahasa();
 });
+
+document.getElementById("inputKurs").addEventListener("input", (e) => {
+  const nilai = parseFloat(e.target.value.replace(",", "."));
+  if (nilai > 0) simpanKursOverride(mataUangAktif, nilai);
+  render();
+});
+
+function perbaruiBarisKurs() {
+  const baris = document.getElementById("barisKurs");
+  const inputKurs = document.getElementById("inputKurs");
+  const teksKurs1 = document.getElementById("txKurs1");
+  const teksKursIDR = document.getElementById("txKursIDR");
+  if (mataUangAktif === "IDR") {
+    baris.style.display = "none";
+    return;
+  }
+  baris.style.display = "flex";
+  teksKurs1.textContent = `1 ${mataUangAktif} =`;
+  teksKursIDR.textContent = "Rp";
+  if (document.activeElement !== inputKurs) inputKurs.value = ambilKurs(mataUangAktif);
+}
 
 // ====== PENYIMPANAN LOKAL (tidak ke server manapun) ======
 const KUNCI_TRANSAKSI = "ck_transaksi";
@@ -753,6 +878,13 @@ let filterBulan = "semua";
 // ====== UTIL ======
 function kodeLocale() { return (BAHASA[bahasaAktif] && BAHASA[bahasaAktif].kode) || "id-ID"; }
 function formatRupiah(angka) { return "Rp" + Math.round(angka).toLocaleString(kodeLocale()); }
+function formatUang(angkaRupiah) {
+  const kodeMU = kodeMataUangAktif();
+  const mu = MATA_UANG[kodeMU];
+  if (kodeMU === "IDR") return formatRupiah(angkaRupiah);
+  const nilai = keMataUangAktif(angkaRupiah);
+  return mu.simbol + nilai.toLocaleString(kodeLocale(), { minimumFractionDigits: mu.desimal, maximumFractionDigits: mu.desimal });
+}
 function formatTanggal(iso) {
   return new Date(iso).toLocaleDateString(kodeLocale(), { day: "numeric", month: "long", year: "numeric" });
 }
@@ -824,11 +956,13 @@ document.getElementById("batalEdit").addEventListener("click", resetForm);
 
 form.addEventListener("submit", function (e) {
   e.preventDefault();
-  const nilai = parseInt(inputJumlah.value.replace(/[^0-9]/g, ""), 10);
-  if (!nilai || nilai <= 0) {
+  const teksBersih = inputJumlah.value.replace(",", ".").replace(/[^0-9.]/g, "");
+  const nilaiInput = parseFloat(teksBersih);
+  if (!nilaiInput || nilaiInput <= 0) {
     tampilkanPesan(pesanForm, t("jumlahHarusDiisi"));
     return;
   }
+  const nilai = Math.round(keRupiah(nilaiInput)); // selalu disimpan dalam Rupiah
   const ket = inputKeterangan.value.trim() || (jenisAktif === "pemasukan" ? t("defaultKetPemasukan") : t("defaultKetPengeluaran"));
 
   if (editId) {
@@ -861,7 +995,9 @@ function mulaiEdit(id) {
   if (!trx) return;
   editId = id;
   setJenis(trx.jenis);
-  inputJumlah.value = trx.jumlah;
+  const mu = MATA_UANG[kodeMataUangAktif()];
+  const nilaiTampil = keMataUangAktif(trx.jumlah);
+  inputJumlah.value = mu.desimal > 0 ? nilaiTampil.toFixed(mu.desimal) : Math.round(nilaiTampil);
   inputKeterangan.value = trx.keterangan;
   labelEdit.style.display = "flex";
   btnSimpan.textContent = t("updateBtn");
@@ -888,9 +1024,9 @@ function render() {
   const totalPengeluaran = transaksi.filter((t) => t.jenis === "pengeluaran").reduce((a, t) => a + t.jumlah, 0);
   const saldo = totalPemasukan - totalPengeluaran;
 
-  document.getElementById("tampilSaldo").textContent = formatRupiah(saldo);
-  document.getElementById("tampilPemasukan").textContent = formatRupiah(totalPemasukan);
-  document.getElementById("tampilPengeluaran").textContent = formatRupiah(totalPengeluaran);
+  document.getElementById("tampilSaldo").textContent = formatUang(saldo);
+  document.getElementById("tampilPemasukan").textContent = formatUang(totalPemasukan);
+  document.getElementById("tampilPengeluaran").textContent = formatUang(totalPengeluaran);
 
   // Ringkasan bulanan
   const peta = {};
@@ -910,11 +1046,11 @@ function render() {
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
             <span style="font-size:13px;font-weight:600;text-transform:capitalize;">${b.label}</span>
             <span style="font-size:13px;font-weight:700;color:${selisih >= 0 ? "#4F7A5D" : "#B85C38"};">
-              ${selisih >= 0 ? "+" : "-"}${formatRupiah(Math.abs(selisih))}
+              ${selisih >= 0 ? "+" : "-"}${formatUang(Math.abs(selisih))}
             </span>
           </div>
           <div style="display:flex;gap:12px;font-size:12px;color:#6B7280;">
-            <span>${t("masuk")}: ${formatRupiah(b.pemasukan)}</span><span>${t("keluar")}: ${formatRupiah(b.pengeluaran)}</span>
+            <span>${t("masuk")}: ${formatUang(b.pemasukan)}</span><span>${t("keluar")}: ${formatUang(b.pengeluaran)}</span>
           </div>
         </div>`;
       }).join("");
@@ -932,19 +1068,19 @@ function render() {
   if (tampil.length === 0) {
     elDaftar.innerHTML = `<p class="kosong">${transaksi.length === 0 ? t("transaksiKosongAwal") : t("transaksiKosongBulan")}</p>`;
   } else {
-    elDaftar.innerHTML = tampil.map((t) => `
+    elDaftar.innerHTML = tampil.map((trx) => `
       <div class="baris-transaksi">
         <div style="min-width:0;">
-          <div class="ket">${escapeHtml(t.keterangan)}</div>
-          <div class="tgl">${formatTanggal(t.tanggal)}</div>
+          <div class="ket">${escapeHtml(trx.keterangan)}</div>
+          <div class="tgl">${formatTanggal(trx.tanggal)}</div>
         </div>
         <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
-          <div class="jumlah" style="color:${t.jenis === "pemasukan" ? "#4F7A5D" : "#B85C38"};">
-            ${t.jenis === "pemasukan" ? "+" : "-"}${formatRupiah(t.jumlah)}
+          <div class="jumlah" style="color:${trx.jenis === "pemasukan" ? "#4F7A5D" : "#B85C38"};">
+            ${trx.jenis === "pemasukan" ? "+" : "-"}${formatUang(trx.jumlah)}
           </div>
           <div class="no-print">
-            <button class="aksi-btn" onclick="mulaiEdit('${t.id}')">✎</button>
-            <button class="aksi-btn" onclick="hapusTransaksi('${t.id}')">🗑</button>
+            <button class="aksi-btn" onclick="mulaiEdit('${trx.id}')">✎</button>
+            <button class="aksi-btn" onclick="hapusTransaksi('${trx.id}')">🗑</button>
           </div>
         </div>
       </div>
